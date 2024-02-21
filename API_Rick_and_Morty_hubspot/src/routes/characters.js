@@ -12,7 +12,7 @@ async function createContac(characters){
     const data = characters.map(async(character)=>{
         const contact = {
             properties:{
-                "character_id": character.id,
+                "character_id": character.character_id,
                 "firstname": character.firstname,
                 "lastname": character.lastname,
                 "status_character": character.status_character,
@@ -20,8 +20,8 @@ async function createContac(characters){
                 "character_gender": character.character_gender,
             },
         }
-        console.log(contact);
-        console.log(character);
+        // console.log(contact);
+        // console.log(character);
         // return contact
         const createContactResponse = await hubspotClient.crm.contacts.basicApi.create(contact);
     });
@@ -43,7 +43,7 @@ async function functionContacts(url) {
             }
         } 
         return {
-            "id": character.id,
+            "character_id": character.id,
             "firstname": firstName.trim(),
             "lastname": lastname,
             "status_character": character.status,
@@ -68,32 +68,41 @@ router.get('/', async (req,res)=>{
 router.post('/',(req,res)=>{
     console.log("POST");
     const properties_req =req.body.properties;
-    console.log("properties:", properties_req);
-    console.log("\n\n");
+    // console.log("properties:", properties_req);
+    // console.log("\n\n");
     const { character_id, firstname, lastname, status_character, character_species, character_gender } = properties_req;
-    const character_id_value = character_id.value;
-    const firstname_value = firstname.value;
-    const lastname_value = lastname.value;
-    const status_character_value = status_character.value;
-    const character_species_value = character_species.value;
-    const character_gender_value = character_gender.value;
-    console.log("\n\n");
-    console.log("firstname:", firstname);
-    console.log("\n\n");
-    console.log("firstname value:", firstname_value);
-    console.log("\n\n");
-    if (character_id_value && firstname_value && lastname_value && status_character_value && character_species_value && character_gender_value){
+    // const character_id_value = character_id.value;
+    // const firstname_value = firstname.value;
+    // const lastname_value = lastname.value;
+    // const status_character_value = status_character.value;
+    // const character_species_value = character_species.value;
+    // const character_gender_value = character_gender.value;
+    // console.log("\n\n");
+    // console.log("firstname:", firstname);
+    // console.log("\n\n");
+    // console.log("firstname value:", firstname_value);
+    // console.log("\n\n");
+    if (character_id.value && firstname.value && lastname.value && status_character.value && character_species.value && character_gender.value){
+        contacts.map((contact)=>{
+            if (contact.character_id == character_id.value){
+                contact.firstname = firstname.value;
+                contact.lastname = lastname.value;
+                contact.status_character = status_character.value;
+                contact.character_species = character_species.value;
+                contact.character_gender = character_gender.value;
+            }
+        });
         // const id = contacts.length + 1;
-        const newCharacter = {
-            "character_id": character_id_value,
-            "firstname": firstname_value,
-            "lastname": lastname_value,
-            "status_character": status_character_value,
-            "character_species": character_species_value,
-            "character_gender": character_gender_value,  
-        };
+        // const newCharacter = {
+        //     "character_id": character_id_value,
+        //     "firstname": firstname_value,
+        //     "lastname": lastname_value,
+        //     "status_character": status_character_value,
+        //     "character_species": character_species_value,
+        //     "character_gender": character_gender_value,  
+        // };
         // contacts.push(newCharacter);
-        console.log(newCharacter);
+        // console.log(newCharacter);
         // res.json(contacts);
     }else{
         res.status(500).json({error: 'There was an error.'});
