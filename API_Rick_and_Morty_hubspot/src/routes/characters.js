@@ -66,6 +66,17 @@ router.get('/', async (req,res)=>{
 router.post('/',(req,res)=>{
     console.log("POST");
     const { firstname, lastname, status_character, character_species, character_gender }=req.body;
+    console.log("\n\n");
+    console.log("firstname:", firstname);
+    console.log("\n\n");
+    console.log("lastname:", lastname);
+    console.log("\n\n");
+    console.log("status_character:", status_character);
+    console.log("\n\n");
+    console.log("character_species:", character_species);
+    console.log("\n\n");
+    console.log("character_gender:", character_gender);
+    console.log("\n\n");
     if (firstname&& lastname && status_character && character_species && character_gender){
         const id = contacts.length + 1;
         const newCharacter = {id,...req.body};
