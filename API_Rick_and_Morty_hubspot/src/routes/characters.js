@@ -67,32 +67,24 @@ router.get('/', async (req,res)=>{
 
 router.post('/',(req,res)=>{
     console.log("POST");
-    const { firstname, lastname, status_character, character_species, character_gender, properties }=req.body;
-    console.log("\n\n");
-    console.log("firstname:", firstname);
-    console.log("\n\n");
-    console.log("lastname:", lastname);
-    console.log("\n\n");
-    console.log("status_character:", status_character);
-    console.log("\n\n");
-    console.log("character_species:", character_species);
-    console.log("\n\n");
-    console.log("character_gender:", character_gender);
-    console.log("\n\n");
+    const { properties }=req.body;
     console.log("properties:", properties);
     console.log("\n\n");
-    const BatchReadInputSimplePublicObjectId = { propertiesWithHistory: ["string"], idProperty: "string", inputs: [{"id":"string"}], properties: ["string"] };
-    const archived = false;
-    async()=>{
-        try {
-          const apiResponse = await hubspotClient.crm.contacts.batchApi.read(BatchReadInputSimplePublicObjectId, archived);
-          console.log(JSON.stringify(apiResponse, null, 2));
-        } catch (e) {
-          e.message === 'HTTP request failed'
-            ? console.error(JSON.stringify(e.response, null, 2))
-            : console.error(e)
-        }
-    }
+    const { firstname, lastname, status_character, character_species, character_gender } = properties;
+    console.log("firstname:", firstname);
+    console.log("\n\n");
+    // const BatchReadInputSimplePublicObjectId = { propertiesWithHistory: ["string"], idProperty: "string", inputs: [{"id":"string"}], properties: ["string"] };
+    // const archived = false;
+    // async()=>{
+    //     try {
+    //       const apiResponse = await hubspotClient.crm.contacts.batchApi.read(BatchReadInputSimplePublicObjectId, archived);
+    //       console.log(JSON.stringify(apiResponse, null, 2));
+    //     } catch (e) {
+    //       e.message === 'HTTP request failed'
+    //         ? console.error(JSON.stringify(e.response, null, 2))
+    //         : console.error(e)
+    //     }
+    // }
     if (firstname&& lastname && status_character && character_species && character_gender){
         const id = contacts.length + 1;
         const newCharacter = {id,...req.body};
@@ -102,8 +94,9 @@ router.post('/',(req,res)=>{
     }else{
         res.status(500).json({error: 'There was an error.'});
     }
-    console.log("\nreq :\n",req.body);
-    res.send('received');
+    // console.log("\nreq :\n",req.body);
+    console.log("\nEND POST\n");
+    // res.send('received');
 });
 
 router.put('/:id', (req,res)=>{
