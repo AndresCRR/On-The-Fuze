@@ -71,7 +71,11 @@ router.post('/',(req,res)=>{
     console.log("properties:", properties);
     console.log("\n\n");
     const { firstname, lastname, status_character, character_species, character_gender } = properties;
+    const firstname_value = firstname.value;
+    console.log("\n\n");
     console.log("firstname:", firstname);
+    console.log("\n\n");
+    console.log("firstname value:", firstname_value);
     console.log("\n\n");
     // const BatchReadInputSimplePublicObjectId = { propertiesWithHistory: ["string"], idProperty: "string", inputs: [{"id":"string"}], properties: ["string"] };
     // const archived = false;
@@ -96,7 +100,7 @@ router.post('/',(req,res)=>{
     }
     // console.log("\nreq :\n",req.body);
     console.log("\nEND POST\n");
-    // res.send('received');
+    res.send('received');
 });
 
 router.put('/:id', (req,res)=>{
