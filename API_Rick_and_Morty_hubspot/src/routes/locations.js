@@ -1,8 +1,8 @@
 const {Router} = require('express');
 const router = Router();
 const _ = require('underscore');
-const fetch = require('node-fetch');
-const { route } = require('.');
+// const fetch = require('node-fetch');
+// const { route } = require('.');
 const hubspot = require('@hubspot/api-client');
 const hubspotClient = new hubspot.Client({ accessToken: 'pat-na1-39ec74a2-7552-4bef-a4d2-9c65301ba2f3' });
 
