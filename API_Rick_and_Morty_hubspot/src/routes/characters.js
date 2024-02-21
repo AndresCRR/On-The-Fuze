@@ -65,7 +65,7 @@ router.get('/', async (req,res)=>{
 
 
 
-router.post('/',async(req,res)=>{
+router.post('/',(req,res)=>{
     console.log("POST");
     const { firstname, lastname, status_character, character_species, character_gender, properties }=req.body;
     console.log("\n\n");
@@ -83,14 +83,15 @@ router.post('/',async(req,res)=>{
     console.log("\n\n");
     const BatchReadInputSimplePublicObjectId = { propertiesWithHistory: ["string"], idProperty: "string", inputs: [{"id":"string"}], properties: ["string"] };
     const archived = false;
-
-    try {
-      const apiResponse = await hubspotClient.crm.contacts.batchApi.read(BatchReadInputSimplePublicObjectId, archived);
-      console.log(JSON.stringify(apiResponse, null, 2));
-    } catch (e) {
-      e.message === 'HTTP request failed'
-        ? console.error(JSON.stringify(e.response, null, 2))
-        : console.error(e)
+    async()=>{
+        try {
+          const apiResponse = await hubspotClient.crm.contacts.batchApi.read(BatchReadInputSimplePublicObjectId, archived);
+          console.log(JSON.stringify(apiResponse, null, 2));
+        } catch (e) {
+          e.message === 'HTTP request failed'
+            ? console.error(JSON.stringify(e.response, null, 2))
+            : console.error(e)
+        }
     }
     if (firstname&& lastname && status_character && character_species && character_gender){
         const id = contacts.length + 1;
