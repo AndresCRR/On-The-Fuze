@@ -67,31 +67,31 @@ router.get('/', async (req,res)=>{
 
 router.post('/',(req,res)=>{
     console.log("POST");
-    const { properties }=req.body;
-    console.log("properties:", properties);
+    const properties_req =req.body.properties;
+    console.log("properties:", properties_req);
     console.log("\n\n");
-    const { firstname, lastname, status_character, character_species, character_gender } = properties;
+    const { character_id, firstname, lastname, status_character, character_species, character_gender } = properties_req;
+    const character_id_value = character_id.value;
     const firstname_value = firstname.value;
+    const lastname_value = lastname.value;
+    const status_character_value = status_character.value;
+    const character_species_value = character_species.value;
+    const character_gender_value = character_gender.value;
     console.log("\n\n");
     console.log("firstname:", firstname);
     console.log("\n\n");
     console.log("firstname value:", firstname_value);
     console.log("\n\n");
-    // const BatchReadInputSimplePublicObjectId = { propertiesWithHistory: ["string"], idProperty: "string", inputs: [{"id":"string"}], properties: ["string"] };
-    // const archived = false;
-    // async()=>{
-    //     try {
-    //       const apiResponse = await hubspotClient.crm.contacts.batchApi.read(BatchReadInputSimplePublicObjectId, archived);
-    //       console.log(JSON.stringify(apiResponse, null, 2));
-    //     } catch (e) {
-    //       e.message === 'HTTP request failed'
-    //         ? console.error(JSON.stringify(e.response, null, 2))
-    //         : console.error(e)
-    //     }
-    // }
-    if (firstname&& lastname && status_character && character_species && character_gender){
-        const id = contacts.length + 1;
-        const newCharacter = {id,...req.body};
+    if (character_id_value && firstname_value && lastname_value && status_character_value && character_species_value && character_gender_value){
+        // const id = contacts.length + 1;
+        const newCharacter = {
+            "character_id": character_id_value,
+            "firstname": firstname_value,
+            "lastname": lastname_value,
+            "status_character": status_character_value,
+            "character_species": character_species_value,
+            "character_gender": character_gender_value,  
+        };
         // contacts.push(newCharacter);
         console.log(newCharacter);
         // res.json(contacts);
