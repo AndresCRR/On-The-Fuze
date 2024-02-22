@@ -10,8 +10,10 @@ let url_character = "https://rickandmortyapi.com/api/character";
 
 async function createContact(characters){
     const allContacts = await hubspotClient.crm.contacts.getAll(undefined,undefined,["lastname","firstname","character_id"]);
+    // const allPropierties = await hubspotClient.crm.contacts.getAll(undefined,undefined,["country"]);
     const contacts_character_ids = [];
     let aux = 0;
+    // console.log("test",allPropierties);
     allContacts.map((data_contac)=>{
         contacts_character_ids.push(data_contac.properties.character_id);
     })
@@ -31,7 +33,8 @@ async function createContact(characters){
                 "lastname": character.lastname,
                 "status_character": character.status_character,
                 "character_species": character.character_species,
-                "character_gender": character.character_gender
+                "character_gender": character.character_gender,
+                "country": character.origin
             },
         }
         console.log(contact);
@@ -103,13 +106,6 @@ router.post('/',(req,res)=>{
     const properties_req =req.body.properties;
     const { character_id, firstname, lastname, status_character, character_species, character_gender } = properties_req;
     let aux = 'new';
-    // console.log("\ncharacter_id: ",character_id);
-    // console.log("\nfirstname: ",firstname);
-    // console.log("\nlastname: ",lastname);
-    // console.log("\nstatus_character: ",status_character);
-    // console.log("\ncharacter_species: ",character_species);
-    // console.log("\ncharacter_gender: ",character_gender);
-    // console.log("character_id",character_id);
     if (character_id.value && (firstname.value || lastname.value) && status_character.value && character_species.value && character_gender.value){
         contacts.map((contact)=>{
             if (contact.character_id == character_id.value){
@@ -119,7 +115,7 @@ router.post('/',(req,res)=>{
                 contact.status_character = status_character.value;
                 contact.character_species = character_species.value;
                 contact.character_gender = character_gender.value;
-                console.log("\n\ncontact:\n",contact);
+                console.log("\ncontact:\n",contact);
             }           
         });
         if (aux=='new'){
