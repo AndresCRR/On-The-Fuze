@@ -81,7 +81,18 @@ router.get('/', async (req,res)=>{
 
 router.post('/',(req,res)=>{
     const location_propierties = req.body.properties;
-    // const { name, location_type, dimension, creation_date }=req.body;
+    const { location_id, name, location_type, dimension, creation_date }=location_propierties;
+    console.log("id:", location_id.value);
+    if (location_id.value && name.value && location_type.value && dimension.value && creation_date.value){
+        locations.map((location)=>{
+            if (location.location_id == location_id.value){
+                location.name = name.value;
+                location.location_type = location_type.value;
+                location.dimension = dimension.value;
+                location.creation_date = creation_date.value;
+            }
+        });
+    }
     // if (name && location_type && dimension && creation_date){
     //     const id = locations.length + 1;
     //     const newLocation = {id,...req.body};
@@ -91,7 +102,8 @@ router.post('/',(req,res)=>{
     // }else{
     //     res.status(500).json({error: 'There was an error.'});
     // }
-    console.log("\nreq :\n",location_propierties);
+    // console.log("\nreq :\n",location_propierties);
+    console.log("\nEND POST LOCATION\n");
     // res.send('received');
 });
 
