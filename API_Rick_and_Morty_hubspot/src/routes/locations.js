@@ -80,7 +80,7 @@ router.get('/', async (req,res)=>{
 }); 
 
 router.post('/',(req,res)=>{
-    console.log("POST");
+    console.log("POST location");
     const location_propierties = req.body.properties;
     const { location_id, name, location_type, dimension, creation_date }=location_propierties;
     // console.log("id:", location_id.value);
