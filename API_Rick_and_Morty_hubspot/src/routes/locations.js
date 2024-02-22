@@ -17,7 +17,7 @@ async function createCompany(companies){
         companies_location_ids.push(data_company.properties.location_id);
     })
     // console.log(allCompanies);
-    console.log(companies_location_ids);
+    // console.log(companies_location_ids);
     const data = companies.map(async(company)=>{
         for (let i in companies_location_ids){
             if(companies_location_ids[i] == company.location_id){
