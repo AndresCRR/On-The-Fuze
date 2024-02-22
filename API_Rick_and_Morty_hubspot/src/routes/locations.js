@@ -10,29 +10,57 @@ const hubspotClient = new hubspot.Client({ accessToken: 'pat-na1-39ec74a2-7552-4
 let url_location = "https://rickandmortyapi.com/api/location"
 
 async function createCompany(companies){
+    const allCompanies = await hubspotClient.crm.companies.getAll(undefined,undefined,["name","location_id"]);
+    const companies_location_ids = [];
+    let aux = 0;
+    allCompanies.map((data_company)=>{
+        companies_location_ids.push(data_company.properties.location_id);
+    })
+    // console.log(allCompanies);
+    console.log(companies_location_ids);
     const data = companies.map(async(company)=>{
-        const location = {
-            properties:{
-                "location_id": company.id,
-                "name": company.name,
-                "location_type": company.location_type,
-                "dimension": company.dimension,
-                "creation_date": company.creation_date,
-            },
+        for (let i in companies_location_ids){
+            if(companies_location_ids[i] == company.location_id){
+                // console.log(contacts_character_ids[i]);
+                aux = 1;
+            }    
         }
-        console.log("\nlocation \n",location);
-        console.log("\nCompany \n",company,"\n\n");
-        const createCompanyResponse = await hubspotClient.crm.companies.basicApi.create(location);
+        if (aux == 1){aux=0;}
+        else{
+            const location = {
+                properties:{
+                    "location_id": company.location_id,
+                    "name": company.name,
+                    "location_type": company.location_type,
+                    "dimension": company.dimension,
+                    "creation_date": company.creation_date,
+                },
+            }
+            console.log("\nlocation \n",location);
+            const createCompanyResponse = await hubspotClient.crm.companies.basicApi.create(location);
+        }
+        // console.log("\nCompany \n",company,"\n\n");
     });
+}
+function arrayIdLocation(total_location){
+    const array_location = [];
+    for (let i = 1; i <= total_location;i++){
+        array_location.push(i);
+    }
+    return array_location
 }
 
 async function functionLocations(url) {
-    const response = await fetch(url);
+    const firstResponse = await fetch(url);
+    const firstLocations = await firstResponse.json();
+    const total_location = firstLocations.info.count;
+    const endpointlocation = arrayIdLocation(total_location);
+    const response = await fetch(url+'/'+endpointlocation);
     const locations = await response.json();
 
-    const data = locations.results.map((location)=>{
+    const data = locations.map((location)=>{
         return {
-            "id": location.id,
+            "location_id": location.id,
             "name": location.name,
             "location_type": location.type,
             "dimension": location.dimension,
@@ -52,18 +80,18 @@ router.get('/', async (req,res)=>{
 }); 
 
 router.post('/',(req,res)=>{
-    const { name, location_type, dimension, creation_date }=req.body;
-    if (name && location_type && dimension && creation_date){
-        const id = locations.length + 1;
-        const newLocation = {id,...req.body};
-        // locations.push(newLocation);
-        // res.json(locations);
-        console.log(newLocation);
-    }else{
-        res.status(500).json({error: 'There was an error.'});
-    }
+    // const { name, location_type, dimension, creation_date }=req.body;
+    // if (name && location_type && dimension && creation_date){
+    //     const id = locations.length + 1;
+    //     const newLocation = {id,...req.body};
+    //     // locations.push(newLocation);
+    //     // res.json(locations);
+    //     console.log(newLocation);
+    // }else{
+    //     res.status(500).json({error: 'There was an error.'});
+    // }
     console.log("\nreq :\n",req.body);
-    res.send('received');
+    // res.send('received');
 });
 
 router.put('/:id', (req,res)=>{
