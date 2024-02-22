@@ -1,6 +1,7 @@
 const {Router} = require('express');
 const router = Router();
 const _ = require('underscore');
+const request = require("request")
 // const fetch = require('node-fetch');
 // const { route } = require('.');
 const hubspot = require('@hubspot/api-client');
@@ -8,8 +9,22 @@ const hubspotClient = new hubspot.Client({ accessToken: 'pat-na1-39ec74a2-7552-4
 
 let url_character = "https://rickandmortyapi.com/api/character";
 
-async function createContac(characters){
+async function createContact(characters){
+    const allContacts = await hubspotClient.crm.contacts.getAll(undefined,undefined,["lastname","firstname","character_id"]);
+    const contacts_character_ids = [];
+    let aux = 0;
+    allContacts.map((data_contac)=>{
+        contacts_character_ids.push(data_contac.properties.character_id);
+    })
     const data = characters.map(async(character)=>{
+        for (let i in contacts_character_ids){
+            if(contacts_character_ids[i] == character.character_id){
+                console.log(contacts_character_ids[i]);
+                aux = 1;
+            }    
+        }
+        if (aux == 1){aux=0;}
+        else{
         const contact = {
             properties:{
                 "character_id": character.character_id,
@@ -20,26 +35,42 @@ async function createContac(characters){
                 "character_gender": character.character_gender,
             },
         }
-        // console.log(contact);
-        // console.log(character);
-        // return contact
         const createContactResponse = await hubspotClient.crm.contacts.basicApi.create(contact);
+        }
     });
 }
 
-async function functionContacts(url) {
-    const response = await fetch(url);
-    const characters = await response.json();
+function arrayPrimeNumber(number){
+    const array_number = [];
+    for (let n=1; n<=number; n++){
+        let count = 0;
+        for (let i=1;i<=n;i++){
+            if (n%i === 0) count++;
+        }
+        if (count === 2) array_number.push(n);
+    }
+    return array_number
+}
 
-    const data = characters.results.map((character)=>{
+async function functionContacts(url) {
+    // First call of characters ---> this call is to know the total characters
+    const firstResponse = await fetch(url);
+    const firstCharacters = await firstResponse.json();
+    const total_characters = firstCharacters.info.count;
+    const primeNumbers = arrayPrimeNumber(total_characters);
+    // Second call of characters ---> this call is to capture the characters where the id is a prime number
+    const response = await fetch(url+'/'+primeNumbers);
+    const characters = await response.json();
+    
+    const data = characters.map((character)=>{
         const fullName = character.name.split(" ");
         let firstName = "";
         let lastname = "";
-        for (let i in fullName){
-            if(i == (fullName.length - 1)){
-                lastname = fullName[i];
-            }else{
-                firstName = firstName + fullName[i] + " ";
+        if (fullName.length == 1){firstName = fullName[0];}
+        else{
+            for (let i in fullName){
+                if(i == (fullName.length - 1)){lastname = fullName[i];}
+                else{firstName = firstName + fullName[i] + " ";}
             }
         } 
         return {
@@ -51,6 +82,7 @@ async function functionContacts(url) {
             "character_gender": character.gender
         } 
     });
+    // console.log(data);
     return data;
 }
 
@@ -60,7 +92,7 @@ functionContacts(url_character).then(data => contacts = data);
 
 router.get('/', async (req,res)=>{   
     res.send(contacts);
-    createContac(contacts);
+    createContact(contacts);
 }); 
 
 
@@ -80,7 +112,7 @@ router.post('/',(req,res)=>{
     // console.log("\n\n");
     // console.log("firstname:", firstname);
     // console.log("\n\n");
-    // console.log("firstname value:", firstname_value);
+    console.log("id:", character_id.value);
     // console.log("\n\n");
     if (character_id.value && firstname.value && lastname.value && status_character.value && character_species.value && character_gender.value){
         contacts.map((contact)=>{
