@@ -112,7 +112,7 @@ router.post('/',(req,res)=>{
     // console.log("firstname:", firstname);
     // console.log("\n\n");
     console.log("id:", character_id.value);
-    // console.log("\n\n");
+    // console.log("\n\n"); 
     if (character_id.value && firstname.value && lastname.value && status_character.value && character_species.value && character_gender.value){
         contacts.map((contact)=>{
             if (contact.character_id == character_id.value){
@@ -140,7 +140,7 @@ router.post('/',(req,res)=>{
     }
     // console.log("\nreq :\n",req.body);
     console.log("\nEND POST\n");
-    res.send('received');
+    // res.send('received');
 });
 
 router.put('/:id', (req,res)=>{
