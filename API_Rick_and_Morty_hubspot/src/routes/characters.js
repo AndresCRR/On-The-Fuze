@@ -103,7 +103,13 @@ router.post('/',(req,res)=>{
     const properties_req =req.body.properties;
     const { character_id, firstname, lastname, status_character, character_species, character_gender } = properties_req;
     let aux = 'new';
-    // console.log(");
+    console.log("\ncharacter_id: ",character_id);
+    console.log("\nfirstname: ",firstname);
+    console.log("\nlastname: ",lastname);
+    console.log("\nstatus_character: ",status_character);
+    console.log("\ncharacter_species: ",character_species);
+    console.log("\ncharacter_gender: ",character_gender);
+    // console.log("character_id",character_id);
     if (character_id.value && firstname.value && lastname.value && status_character.value && character_species.value && character_gender.value){
         contacts.map((contact)=>{
             if (contact.character_id == character_id.value){
