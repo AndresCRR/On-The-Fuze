@@ -80,6 +80,7 @@ router.get('/', async (req,res)=>{
 }); 
 
 router.post('/',(req,res)=>{
+    const location_propierties = req.body.properties;
     // const { name, location_type, dimension, creation_date }=req.body;
     // if (name && location_type && dimension && creation_date){
     //     const id = locations.length + 1;
@@ -90,7 +91,7 @@ router.post('/',(req,res)=>{
     // }else{
     //     res.status(500).json({error: 'There was an error.'});
     // }
-    console.log("\nreq :\n",req.body);
+    console.log("\nreq :\n",location_propierties);
     // res.send('received');
 });
 

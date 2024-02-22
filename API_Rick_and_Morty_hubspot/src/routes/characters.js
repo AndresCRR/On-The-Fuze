@@ -31,7 +31,7 @@ async function createContact(characters){
                 "lastname": character.lastname,
                 "status_character": character.status_character,
                 "character_species": character.character_species,
-                "character_gender": character.character_gender,
+                "character_gender": character.character_gender
             },
         }
         console.log(contact);
@@ -41,7 +41,7 @@ async function createContact(characters){
 }
 
 function arrayPrimeNumber(number){
-    const array_number = [];
+    const array_number = [1];
     for (let n=1; n<=number; n++){
         let count = 0;
         for (let i=1;i<=n;i++){
@@ -79,7 +79,8 @@ async function functionContacts(url) {
             "lastname": lastname,
             "status_character": character.status,
             "character_species": character.species,
-            "character_gender": character.gender
+            "character_gender": character.gender,
+            "origin": character.origin.name
         } 
     });
     // console.log(data);
