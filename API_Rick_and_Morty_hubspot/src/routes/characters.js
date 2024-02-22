@@ -1,7 +1,6 @@
 const {Router} = require('express');
 const router = Router();
 const _ = require('underscore');
-const request = require("request")
 // const fetch = require('node-fetch');
 // const { route } = require('.');
 const hubspot = require('@hubspot/api-client');
@@ -19,7 +18,7 @@ async function createContact(characters){
     const data = characters.map(async(character)=>{
         for (let i in contacts_character_ids){
             if(contacts_character_ids[i] == character.character_id){
-                console.log(contacts_character_ids[i]);
+                // console.log(contacts_character_ids[i]);
                 aux = 1;
             }    
         }
@@ -98,22 +97,12 @@ router.get('/', async (req,res)=>{
 
 
 router.post('/',(req,res)=>{
-    console.log("POST");
+    console.log("POST\n\n");
     const properties_req =req.body.properties;
-    // console.log("properties:", properties_req);
-    // console.log("\n\n");
     const { character_id, firstname, lastname, status_character, character_species, character_gender } = properties_req;
-    // const character_id_value = character_id.value;
-    // const firstname_value = firstname.value;
-    // const lastname_value = lastname.value;
-    // const status_character_value = status_character.value;
-    // const character_species_value = character_species.value;
-    // const character_gender_value = character_gender.value;
-    // console.log("\n\n");
-    // console.log("firstname:", firstname);
-    // console.log("\n\n");
+    // console.log(properties_req)
     console.log("id:", character_id.value);
-    // console.log("\n\n");
+    console.log("id:", firstname.value);
     if (character_id.value && firstname.value && lastname.value && status_character.value && character_species.value && character_gender.value){
         contacts.map((contact)=>{
             if (contact.character_id == character_id.value){
@@ -124,18 +113,6 @@ router.post('/',(req,res)=>{
                 contact.character_gender = character_gender.value;
             }
         });
-        // const id = contacts.length + 1;
-        // const newCharacter = {
-        //     "character_id": character_id_value,
-        //     "firstname": firstname_value,
-        //     "lastname": lastname_value,
-        //     "status_character": status_character_value,
-        //     "character_species": character_species_value,
-        //     "character_gender": character_gender_value,  
-        // };
-        // contacts.push(newCharacter);
-        // console.log(newCharacter);
-        // res.json(contacts);
     }else{
         res.status(500).json({error: 'There was an error.'});
     }
