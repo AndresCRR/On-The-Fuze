@@ -102,8 +102,8 @@ router.post('/',(req,res)=>{
     console.log("POST");
     const properties_req =req.body.properties;
     const { character_id, firstname, lastname, status_character, character_species, character_gender } = properties_req;
-    console.log("id:", character_id.value);
-    console.log("name:", firstname.value," ", lastname.value);
+    // console.log("id:", character_id.value);
+    // console.log("name:", firstname.value," ", lastname.value);
     console.log("\n\n"); 
     if (character_id.value && firstname.value && lastname.value && status_character.value && character_species.value && character_gender.value){
         contacts.map((contact)=>{
@@ -120,7 +120,7 @@ router.post('/',(req,res)=>{
         res.status(500).json({error: 'There was an error.'});
     }
     console.log("\nEND POST CHARACTERS\n");
-    // res.send('received');
+    res.send('received');
 });
 
 router.put('/:id', (req,res)=>{

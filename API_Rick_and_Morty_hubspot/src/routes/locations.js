@@ -80,12 +80,14 @@ router.get('/', async (req,res)=>{
 }); 
 
 router.post('/',(req,res)=>{
+    console.log("POST");
     const location_propierties = req.body.properties;
     const { location_id, name, location_type, dimension, creation_date }=location_propierties;
-    console.log("id:", location_id.value);
-    console.log("name:", name.value);
-    console.log("location type:", location_type.value);
-    console.log("dimension:", dimension.value);
+    // console.log("id:", location_id.value);
+    // console.log("name:", name.value);
+    // console.log("location type:", location_type.value);
+    // console.log("dimension:", dimension.value);
+    console.log("\n\n");
     if (location_id.value && name.value && location_type.value && dimension.value && creation_date.value){
         locations.map((location)=>{
             if (location.location_id == location_id.value){
@@ -108,7 +110,7 @@ router.post('/',(req,res)=>{
     // }
     // console.log("\nreq :\n",location_propierties);
     console.log("\nEND POST LOCATION\n");
-    // res.send('received');
+    res.send('received');
 });
 
 router.put('/:id', (req,res)=>{
