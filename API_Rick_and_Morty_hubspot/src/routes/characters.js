@@ -65,7 +65,7 @@ async function functionContacts(url) {
     const data = characters.map((character)=>{
         const fullName = character.name.split(" ");
         let firstName = "";
-        let lastname = "";
+        let lastname = " ";
         if (fullName.length == 1){firstName = fullName[0];}
         else{
             for (let i in fullName){
