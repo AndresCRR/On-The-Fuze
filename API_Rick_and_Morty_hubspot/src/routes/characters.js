@@ -110,14 +110,22 @@ router.post('/',(req,res)=>{
     // console.log("\ncharacter_species: ",character_species);
     // console.log("\ncharacter_gender: ",character_gender);
     // console.log("character_id",character_id);
-    if ((firstname.value || lastname.value) && status_character.value && character_species.value && character_gender.value){
-        if (character_id){
-            aux = 'update';
-        }
+    if (character_id.value && (firstname.value || lastname.value) && status_character.value && character_species.value && character_gender.value){
+        contacts.map((contact)=>{
+            if (contact.character_id == character_id.value){
+                aux = 'update';
+                contact.firstname = firstname.value;
+                contact.lastname = lastname.value;
+                contact.status_character = status_character.value;
+                contact.character_species = character_species.value;
+                contact.character_gender = character_gender.value;
+                console.log("\n\ncontact:\n",contact);
+            }           
+        });
         if (aux=='new'){
-            const id = contacts[contacts.length-1].character_id + 1;
+            // const id = contacts[contacts.length-1].character_id + 1;
             const newContact = {
-                "character_id": id,
+                "character_id": character_id.value,
                 "firstname": firstname.value,
                 "lastname": lastname.value,
                 "status_character": status_character.value,
@@ -127,17 +135,6 @@ router.post('/',(req,res)=>{
             contacts.push(newContact);
             res.send('create a new contact');
         }else{
-            contacts.map((contact)=>{
-                if (contact.character_id == character_id.value){
-                    aux = 'update';
-                    contact.firstname = firstname.value;
-                    contact.lastname = lastname.value;
-                    contact.status_character = status_character.value;
-                    contact.character_species = character_species.value;
-                    contact.character_gender = character_gender.value;
-                    console.log("\n\ncontact:\n",contact);
-                }           
-            });
             res.send('update contacts');
         }
     }
