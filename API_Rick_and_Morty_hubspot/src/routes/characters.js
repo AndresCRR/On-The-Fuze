@@ -116,7 +116,7 @@ router.post('/',(req,res)=>{
             }           
         });
         if (aux=='new'){
-            const id = locations.length + 1;
+            const id = contacts[contacts.length-1].character_id + 1;
             const newContact = {
                 "character_id": id,
                 "firstname": firstname.value,
