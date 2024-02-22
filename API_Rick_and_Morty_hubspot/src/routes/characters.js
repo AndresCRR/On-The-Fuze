@@ -110,7 +110,7 @@ router.post('/',(req,res)=>{
     console.log("\ncharacter_species: ",character_species);
     console.log("\ncharacter_gender: ",character_gender);
     // console.log("character_id",character_id);
-    if (character_id.value && firstname.value && lastname.value && status_character.value && character_species.value && character_gender.value){
+    if (character_id.value && (firstname.value || lastname.value) && status_character.value && character_species.value && character_gender.value){
         contacts.map((contact)=>{
             if (contact.character_id == character_id.value){
                 aux = 'update';
