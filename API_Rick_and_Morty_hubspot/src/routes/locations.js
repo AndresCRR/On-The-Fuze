@@ -87,7 +87,7 @@ router.post('/',(req,res)=>{
     // console.log("name:", name.value);
     // console.log("location type:", location_type.value);
     // console.log("dimension:", dimension.value);
-    console.log("\n\n");
+    // console.log("\n\n");
     if (location_id.value && name.value && location_type.value && dimension.value && creation_date.value){
         locations.map((location)=>{
             if (location.location_id == location_id.value){

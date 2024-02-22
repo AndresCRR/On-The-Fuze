@@ -102,12 +102,11 @@ router.post('/',(req,res)=>{
     console.log("POST");
     const properties_req =req.body.properties;
     const { character_id, firstname, lastname, status_character, character_species, character_gender } = properties_req;
-    // console.log("id:", character_id.value);
-    // console.log("name:", firstname.value," ", lastname.value);
-    console.log("\n\n"); 
+    let aux = 'new';
     if (character_id.value && firstname.value && lastname.value && status_character.value && character_species.value && character_gender.value){
         contacts.map((contact)=>{
             if (contact.character_id == character_id.value){
+                aux = 'update';
                 contact.firstname = firstname.value;
                 contact.lastname = lastname.value;
                 contact.status_character = status_character.value;
@@ -116,11 +115,24 @@ router.post('/',(req,res)=>{
                 console.log("\n\ncontact:\n",contact);
             }           
         });
+        if (aux=='new'){
+            const newContact = {
+                "character_id": character_id.value,
+                "firstname": firstname.value,
+                "lastname": lastname.value,
+                "status_character": status_character.value,
+                "character_species": character_species.value,
+                "character_gender": character_gender.value,
+            };
+            contacts.push(newContact);
+            res.send('create a new contact');
+        }else{
+            res.send('update contacts');
+        }
     }else{
         res.status(500).json({error: 'There was an error.'});
     }
     console.log("\nEND POST CHARACTERS\n");
-    res.send('received');
 });
 
 router.put('/:id', (req,res)=>{
