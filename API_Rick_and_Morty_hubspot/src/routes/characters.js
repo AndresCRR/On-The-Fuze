@@ -34,6 +34,7 @@ async function createContact(characters){
                 "character_gender": character.character_gender,
             },
         }
+        console.log(contact);
         const createContactResponse = await hubspotClient.crm.contacts.basicApi.create(contact);
         }
     });
