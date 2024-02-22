@@ -103,19 +103,19 @@ router.post('/',(req,res)=>{
     // console.log(properties_req)
     console.log("id:", character_id.value);
     console.log("id:", firstname.value);
-    if (character_id.value && firstname.value && lastname.value && status_character.value && character_species.value && character_gender.value){
-        contacts.map((contact)=>{
-            if (contact.character_id == character_id.value){
-                contact.firstname = firstname.value;
-                contact.lastname = lastname.value;
-                contact.status_character = status_character.value;
-                contact.character_species = character_species.value;
-                contact.character_gender = character_gender.value;
-            }
-        });
-    }else{
-        res.status(500).json({error: 'There was an error.'});
-    }
+    // if (character_id.value && firstname.value && lastname.value && status_character.value && character_species.value && character_gender.value){
+    contacts.map((contact)=>{
+        if (contact.character_id == character_id.value){
+            contact.firstname = firstname.value;
+            contact.lastname = lastname.value;
+            contact.status_character = status_character.value;
+            contact.character_species = character_species.value;
+            contact.character_gender = character_gender.value;
+        }
+    });
+    // }else{
+    //     res.status(500).json({error: 'There was an error.'});
+    // }
     // console.log("\nreq :\n",req.body);
     console.log("\nEND POST\n");
     res.send('received');
