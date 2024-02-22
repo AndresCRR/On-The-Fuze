@@ -93,8 +93,8 @@ router.post('/',(req,res)=>{
                 location.location_type = location_type.value;
                 location.dimension = dimension.value;
                 location.creation_date = creation_date.value;
+                console.log("\n\n\nlocation: \n", location);
             }
-            console.log("\n\n\nlocation: \n", location);
         });
     }
     // if (name && location_type && dimension && creation_date){

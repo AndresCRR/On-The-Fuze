@@ -113,7 +113,8 @@ router.post('/',(req,res)=>{
                 contact.status_character = status_character.value;
                 contact.character_species = character_species.value;
                 contact.character_gender = character_gender.value;
-            }
+                console.log("\n\ncontact:\n",contact);
+            }           
         });
     }else{
         res.status(500).json({error: 'There was an error.'});
