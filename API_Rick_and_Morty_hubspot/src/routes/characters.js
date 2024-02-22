@@ -116,8 +116,9 @@ router.post('/',(req,res)=>{
             }           
         });
         if (aux=='new'){
+            const id = locations.length + 1;
             const newContact = {
-                "character_id": character_id.value,
+                "character_id": id,
                 "firstname": firstname.value,
                 "lastname": lastname.value,
                 "status_character": status_character.value,
