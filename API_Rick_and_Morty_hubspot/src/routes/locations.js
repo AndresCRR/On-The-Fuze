@@ -75,7 +75,7 @@ functionLocations(url_location).then(data => locations = data);
 
 
 router.get('/', async (req,res)=>{
-    res.send(locations);
+    res.json(locations);
     createCompany(locations);
 }); 
 
