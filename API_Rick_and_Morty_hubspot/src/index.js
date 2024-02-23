@@ -1,8 +1,8 @@
-import express from 'express'
-import morgan from 'morgan'
-import characters from './routes/characters.js'
-import locations from './routes/locations.js'
-import associate from './routes/associate.js';
+const express = require('express');
+const morgan = require('morgan');
+const v1Characters = require('./v1/routes/characterRoutes.js');
+const v1Locations = require('./v1/routes/locationRoutes.js');
+const v1Associates = require('./v1/routes/associateRoutes.js');
 
 const app = express();
 
@@ -15,9 +15,9 @@ app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 
 //routes
-app.use('/api/associate', associate);
-app.use('/api/characters', characters);
-app.use('/api/locations', locations);
+app.use('/api/v1/associates', v1Associates);
+app.use('/api/v1/characters', v1Characters);
+app.use('/api/v1/locations', v1Locations);
 
 //starting the server 
 app.listen(app.get('port'), () => {
