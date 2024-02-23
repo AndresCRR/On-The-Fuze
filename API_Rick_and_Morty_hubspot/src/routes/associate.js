@@ -1,8 +1,9 @@
 import { Router } from 'express'
 import hubspot from '@hubspot/api-client'
+import data_key from './private.json' assert { type:'json'}
 
 const router = Router();
-const hubspotClient = new hubspot.Client({ accessToken: 'pat-na1-39ec74a2-7552-4bef-a4d2-9c65301ba2f3' });
+const hubspotClient = new hubspot.Client({ accessToken: data_key.key });
 
 async function associationContactCompany() {
     const allCompanies = await hubspotClient.crm.companies.getAll(undefined, undefined, ["name", "location_id"]);
