@@ -13,15 +13,9 @@ const getCreateCompany = async (req, res) => {
 };
 
 const postCreateUpdateCompany = (req, res) => {
-    console.log("POST location");
-    // const allLocations = locationService.getAllLocations();
     const locationPropierties = req.body.properties;
     const createUpdateCompany = locationService.postCreateUpdateCompany(locationPropierties);
     res.status(201).send({ status:"ok", action:"post",data: createUpdateCompany})
-
-    
-    console.log("\nEND POST LOCATION\n");
-    // res.send("recieved");
 };
 
 

@@ -18,6 +18,46 @@ const getCreateCharacters = async (contacts) => {
     return createCharacters;
 }
 
+const postCreateUpdateContact = (contacPropierties) => {
+    
+    const { character_id, firstname, lastname, status_character, character_species, character_gender } = contacPropierties;
+    const contactNewUpdate = [];
+    let aux = 'new';
+    if (character_id.value && (firstname.value || lastname.value) && status_character.value && character_species.value && character_gender.value) {
+        contacts.map((contact) => {
+            if (contact.character_id == character_id.value) {
+                aux = 'update';
+                contact.firstname = firstname.value;
+                contact.lastname = lastname.value;
+                contact.status_character = status_character.value;
+                contact.character_species = character_species.value;
+                contact.character_gender = character_gender.value;
+                console.log("\ncontact:\n", contact);
+                contactNewUpdate.push(contact);
+            }
+        });
+        if (aux == 'new') {
+            const newContact = {
+                "character_id": character_id.value,
+                "firstname": firstname.value,
+                "lastname": lastname.value,
+                "status_character": status_character.value,
+                "character_species": character_species.value,
+                "character_gender": character_gender.value,
+            };
+            contacts.push(newContact);
+            contactNewUpdate.push(newContact);
+            // res.send('create a new contact');
+        } else {
+            // res.send('update contacts');
+        }
+    }
+    // else{
+    //     res.status(500).json({error: 'There was an error.'});
+    // }
+    return contactNewUpdate;
+};
+
 function arrayPrimeNumber(number) {
     const array_number = [1];
     for (let n = 1; n <= number; n++) {
@@ -101,5 +141,6 @@ async function createContact(characters) {
 
 module.exports = {
     getAllCharacters,
-    getCreateCharacters
+    getCreateCharacters,
+    postCreateUpdateContact
 };

@@ -8,8 +8,9 @@ const getCreateContact = async (characters) => {
     const createContact = await Character.getCreateCharacters(characters);
     return createContact;
 };
-const postCreateUpdateContact = () => {
-    return;
+const postCreateUpdateContact = (contacPropierties) => {
+    const createUpdateContact = Character.postCreateUpdateContact(contacPropierties);
+    return createUpdateContact;
 };
 
 module.exports = {
