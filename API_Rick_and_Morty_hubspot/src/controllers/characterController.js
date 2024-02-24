@@ -11,13 +11,14 @@ const getCreateContact = async (req, res) => {
     res.send({ status: "OK", action: "Create", data: createContact });
 };
 
-const postCreateUpdateContact = (req, res) => {
-    console.log("POST Character");
+const postCreateUpdateContact = async(req, res) => {
+    // console.log("POST Character");
     const contacPropierties = req.body.properties;
-    const createUpdateContact = characterService.postCreateUpdateContact(contacPropierties);
-    res.status(201).send({ status:"ok", action:"post",data: createUpdateContact})
+    const createUpdateContact = await characterService.postCreateUpdateContact(contacPropierties);
+    res.status(201).json({ status:"ok", action:"post",data: createUpdateContact})
+    // res.json({});
     // const properties_req = req.body.properties;
-    console.log("\nEND POST CHARACTERS\n");
+    // console.log("\nEND POST CHARACTERS\n");
 }
 
 
