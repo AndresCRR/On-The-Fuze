@@ -14,7 +14,14 @@ const getCreateCompany = async (req, res) => {
 
 const postCreateUpdateCompany = (req, res) => {
     console.log("POST location");
+    const headers = req.headers;
+    const location = req.body;
     const location_propierties = req.body.properties;
+    console.log("\nHeders");
+    console.log(headers);
+    console.log("\nbody");
+    console.log(location);
+    console.log("\nbody propiertis");
     console.log(location_propierties);
     // const { location_id, name, location_type, dimension, creation_date } = location_propierties;
     // let aux = 'new';
@@ -44,6 +51,7 @@ const postCreateUpdateCompany = (req, res) => {
     //     }
     // }
     console.log("\nEND POST LOCATION\n");
+    res.send("recieved");
 };
 
 
