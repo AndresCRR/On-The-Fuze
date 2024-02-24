@@ -8,8 +8,9 @@ const getCreateCompany = async (locations) => {
     const createCompany = await Location.getCreateCompany(locations);
     return createCompany;
 };
-const postCreateUpdateCompany = () => {
-    return;
+const postCreateUpdateCompany = (locationPropierties) => {
+    const createUpdateCompany = Location.postCreateUpdateCompany(locationPropierties);
+    return createUpdateCompany;
 };
 
 module.exports = {
