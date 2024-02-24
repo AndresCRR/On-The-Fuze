@@ -82,6 +82,7 @@ async function functionLocations(url) {
 }
 
 async function createCompany(companies) {
+    if(!companies)return;
     const allCompanies = await hubspotClient.crm.companies.getAll(undefined, undefined, ["name", "location_id"]);
     const companies_location_ids = [];
     const locationCreates = [];

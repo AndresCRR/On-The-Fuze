@@ -105,6 +105,7 @@ async function functionContacts(url) {
 }
 
 async function createContact(characters) {
+    if(!characters)return;
     const allContacts = await hubspotClient.crm.contacts.getAll(undefined, undefined, ["lastname", "firstname", "character_id"]);
     const contactsCharacterIds = [];
     const contactCreates = [];

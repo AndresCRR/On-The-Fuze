@@ -15,9 +15,6 @@ app.use(express.json());
 app.use('/api/v1/associates', v1Associates);
 app.use('/api/v1/characters', v1Characters);
 app.use('/api/v1/locations', v1Locations);
-app.use('/task',(req,res)=>{
-    res.send([]);
-});
 
 module.exports ={
     app
