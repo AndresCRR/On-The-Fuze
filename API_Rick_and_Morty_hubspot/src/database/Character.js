@@ -33,6 +33,10 @@ const postCreateUpdateContact = async (contacPropierties) => {
   let aux = "new";
   if (character_id) {
     //update contact
+    const test_find = contacts.find(
+      (contact) => contact.character_id === character_id.value
+    );
+    console.log("\nTest find\n", test_find);
     contacts.map((contact) => {
       if (contact.character_id == character_id.value) {
         aux = "update";
@@ -46,7 +50,7 @@ const postCreateUpdateContact = async (contacPropierties) => {
       }
     });
   } else {
-    //create contact
+    //create contact in characters an update character_id in contacts
     const newContact = await createNewCharacter(
       firstname.value,
       lastname.value,
@@ -56,39 +60,8 @@ const postCreateUpdateContact = async (contacPropierties) => {
       hs_object_id.value
     );
     contacts.push(newContact);
+    return newContact;
   }
-  // if (character_id.value && (firstname.value || lastname.value) && status_character.value && character_species.value && character_gender.value) {
-  //     contacts.map((contact) => {
-  //         if (contact.character_id == character_id.value) {
-  //             aux = 'update';
-  //             contact.firstname = firstname.value;
-  //             contact.lastname = lastname.value;
-  //             contact.status_character = status_character.value;
-  //             contact.character_species = character_species.value;
-  //             contact.character_gender = character_gender.value;
-  //             console.log("\ncontact:\n", contact);
-  //             contactNewUpdate.push(contact);
-  //         }
-  //     });
-  //     if (aux == 'new') {
-  //         const newContact = {
-  //             "character_id": character_id.value,
-  //             "firstname": firstname.value,
-  //             "lastname": lastname.value,
-  //             "status_character": status_character.value,
-  //             "character_species": character_species.value,
-  //             "character_gender": character_gender.value,
-  //         };
-  //         contacts.push(newContact);
-  //         contactNewUpdate.push(newContact);
-  //         // res.send('create a new contact');
-  //     } else {
-  //         // res.send('update contacts');
-  //     }
-  // }
-  // else{
-  //     res.status(500).json({error: 'There was an error.'});
-  // }
   return contactNewUpdate;
 };
 
