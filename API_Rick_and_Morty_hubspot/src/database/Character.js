@@ -24,7 +24,7 @@ const postCreateUpdateContact = (contacPropierties) => {
     const { character_id, firstname, lastname, status_character, character_species, character_gender, hs_object_id } = contacPropierties;
     const contactNewUpdate = [];
     let aux = 'new';
-    if (character_id.value){
+    if (character_id){
         //update contact
         contacts.map((contact) => {
             if (contact.character_id == character_id.value) {
@@ -105,6 +105,10 @@ const postCreateUpdateContact = (contacPropierties) => {
     return contactNewUpdate;
 };
 
+// async function createNewCharacter(firstname, lastname,status_character,character_species,character_gender){
+
+// }
+ 
 function arrayPrimeNumber(number) {
     const array_number = [1];
     for (let n = 1; n <= number; n++) {
