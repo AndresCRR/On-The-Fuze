@@ -111,11 +111,11 @@ async function createNewCharacter(
   };
   // contactNewUpdate.push(newContact);
   console.log("New Contact");
-  console.log(hs_object_id.value);
+  console.log(hs_object_id);
   const BatchInputSimplePublicObjectBatchInput = {
     inputs: [
       {
-        id: hs_object_id.value,
+        id: hs_object_id,
         properties: {
           character_id: id,
         },
