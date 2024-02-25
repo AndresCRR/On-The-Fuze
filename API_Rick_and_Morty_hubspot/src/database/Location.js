@@ -1,4 +1,5 @@
 const DB = require("./db.json");
+const { v4: uuidv4 } = require("uuid");
 const hubspot = require("@hubspot/api-client");
 const data_key = require("../database/private.json");
 
@@ -18,45 +19,12 @@ const getCreateCompany = async (locations) => {
   return createLocations;
 };
 
-const postCreateUpdateCompany = (locationPropierties) => {
-  const { location_id, name, location_type, dimension, creation_date } =
-    locationPropierties;
-  const locationNewUpdate = [];
-  let aux = "new";
-  if (
-    location_id.value &&
-    name.value &&
-    location_type.value &&
-    dimension.value &&
-    creation_date.value
-  ) {
-    locations.map((location) => {
-      if (location.location_id == location_id.value) {
-        aux = "update";
-        location.name = name.value;
-        location.location_type = location_type.value;
-        location.dimension = dimension.value;
-        location.creation_date = creation_date.value;
-        console.log("\nlocation: \n", location);
-        locationNewUpdate.push(location);
-      }
-    });
-    if (aux == "new") {
-      const newLocation = {
-        character_id: location_id.value,
-        name: name.value,
-        location_type: location_type.value,
-        dimension: dimension.value,
-        creation_date: creation_date.value,
-      };
-      locations.push(newLocation);
-      locationNewUpdate.push(newLocation);
-      // res.send('create a new location');
-    } else {
-      // res.send('update location');
-    }
-  }
-  return locationNewUpdate;
+const postCreateUpdateCompany = async (locationPropierties) => {
+  const createUpdateCompany = await createUpdateLocations(
+    locationPropierties,
+    locations
+  );
+  return createUpdateCompany;
 };
 
 function arrayIdLocation(total_location) {
@@ -94,21 +62,13 @@ async function createCompany(companies) {
     undefined,
     ["name", "location_id"]
   );
-  const companies_location_ids = [];
   const locationCreates = [];
-  let aux = 0;
-  allCompanies.map((data_company) => {
-    companies_location_ids.push(data_company.properties.location_id);
-  });
-  const data = companies.map(async (company) => {
-    for (let i in companies_location_ids) {
-      if (companies_location_ids[i] == company.location_id) {
-        aux = 1;
-      }
-    }
-    if (aux == 1) {
-      aux = 0;
-    } else {
+  companies.map(async (company) => {
+    const companieHs = allCompanies.find(
+      (data_companie) =>
+        data_companie.properties.location_id == company.location_id
+    );
+    if (!companieHs) {
       const location = {
         properties: {
           location_id: company.location_id,
@@ -123,9 +83,77 @@ async function createCompany(companies) {
       const createCompanyResponse =
         await hubspotClient.crm.companies.basicApi.create(location);
     }
-    // console.log("\nCompany \n",company,"\n\n");
   });
   return locationCreates;
+}
+
+async function createUpdateLocations(locationPropierties, locations) {
+  if (!locations) return [];
+  const {
+    location_id,
+    name,
+    location_type,
+    dimension,
+    creation_date,
+    hs_object_id,
+  } = locationPropierties;
+  if (location_id) {
+    const locationToUpdate = locations.find(
+      (location) => location.location_id == location_id.value
+    );
+    locationToUpdate.name = name.value;
+    locationToUpdate.location_type = location_type.value;
+    locationToUpdate.dimension = dimension.value;
+    locationToUpdate.creation_date = creation_date.value;
+    return locationToUpdate;
+  } else {
+    const newLocation = await createNewLocation(
+      name.value,
+      location_type.value,
+      dimension.value,
+      creation_date.value,
+      hs_object_id.value
+    );
+    locations.push(newLocation);
+    return newLocation;
+  }
+}
+
+async function createNewLocation(
+  name,
+  location_type,
+  dimension,
+  creation_date,
+  hs_object_id
+) {
+  const id = uuidv4();
+  const newLocation = {
+    location_id: id,
+    name: name,
+    location_type: location_type,
+    dimension: dimension,
+    creation_date: creation_date,
+  };
+  const BatchInputSimplePublicObjectBatchInput = {
+    inputs: [
+      {
+        id: hs_object_id,
+        properties: {
+          location_id: id,
+        },
+      },
+    ],
+  };
+  try {
+    const apiResponse = await hubspotClient.crm.companies.batchApi.update(
+      BatchInputSimplePublicObjectBatchInput
+    );
+    return newContact;
+  } catch (e) {
+    e.message === "HTTP request failed"
+      ? console.error(JSON.stringify(e.response, null, 2))
+      : console.error(e);
+  }
 }
 
 module.exports = {

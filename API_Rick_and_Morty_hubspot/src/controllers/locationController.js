@@ -7,12 +7,11 @@ const getAllLocations = (req, res) => {
 
 const getCreateCompany = async (req, res) => {
   const allLocations = locationService.getAllLocations();
-  // if(!allLocations)return res.status(400).send("Please charge first locations in /api/v1/locations")
-  const createLocations = locationService.getCreateCompany(allLocations);
+  const createLocations = await locationService.getCreateCompany(allLocations);
   res.send({ status: "OK", action: "Create", data: createLocations });
 };
 
-const postCreateUpdateCompany = (req, res) => {
+const postCreateUpdateCompany = async (req, res) => {
   const locationBody = req.body;
   if (!locationBody.properties)
     return res.status(400).send("Bad Request pending for properties in file");
@@ -25,8 +24,9 @@ const postCreateUpdateCompany = (req, res) => {
   ) {
     return res.status(400).send("Bad Request");
   }
-  const createUpdateCompany =
-    locationService.postCreateUpdateCompany(locationPropierties);
+  const createUpdateCompany = await locationService.postCreateUpdateCompany(
+    locationPropierties
+  );
   res
     .status(201)
     .send({ status: "ok", action: "post", data: createUpdateCompany });
