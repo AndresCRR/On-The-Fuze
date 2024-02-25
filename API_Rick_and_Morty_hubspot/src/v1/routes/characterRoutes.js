@@ -1,12 +1,12 @@
-const { Router } = require('express');
-const _ = require('underscore');
-const characterController = require('../../controllers/characterController');
+const { Router } = require("express");
+const _ = require("underscore");
+const characterController = require("../../controllers/characterController");
 const router = Router();
 
 router
-    .get('/', characterController.getAllCharacters)
-    .get('/create', characterController.getCreateContact)
-    .post('/', characterController.postCreateUpdateContact);
+  .get("/", characterController.getAllCharacters)
+  .get("/create", characterController.getCreateContact)
+  .post("/", characterController.postCreateUpdateContact);
 
 // router.put('/:id', (req, res) => {
 //     const { id } = req.params;
@@ -37,6 +37,5 @@ router
 //     })
 //     res.send(contacts);
 // });
-
 
 module.exports = router;

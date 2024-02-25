@@ -1,13 +1,13 @@
-const { Router } = require('express');
-const _ = require('underscore');
-const locationController = require('../../controllers/locationController');
-const { route } = require('./characterRoutes');
+const { Router } = require("express");
+const _ = require("underscore");
+const locationController = require("../../controllers/locationController");
+const { route } = require("./characterRoutes");
 const router = Router();
 
 router
-    .get('/', locationController.getAllLocations)
-    .get('/create', locationController.getCreateCompany)
-    .post('/', locationController.postCreateUpdateCompany);
+  .get("/", locationController.getAllLocations)
+  .get("/create", locationController.getCreateCompany)
+  .post("/", locationController.postCreateUpdateCompany);
 
 // router.put('/:id', (req, res) => {
 //     const { id } = req.params;

@@ -86,21 +86,13 @@ async function createContact(characters) {
     undefined,
     ["lastname", "firstname", "character_id"]
   );
-  const contactsCharacterIds = [];
   const contactCreates = [];
-  let aux = 0;
-  allContacts.map((data_contac) => {
-    contactsCharacterIds.push(data_contac.properties.character_id);
-  });
-  const data = characters.map(async (character) => {
-    for (let i in contactsCharacterIds) {
-      if (contactsCharacterIds[i] == character.character_id) {
-        aux = 1;
-      }
-    }
-    if (aux == 1) {
-      aux = 0;
-    } else {
+  characters.map(async (character) => {
+    const contactHs = allContacts.find(
+      (data_contact) =>
+        data_contact.properties.character_id == character.character_id
+    );
+    if (!contactHs) {
       const contact = {
         properties: {
           character_id: character.character_id,
