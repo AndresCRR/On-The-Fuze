@@ -22,108 +22,56 @@ async function associationContactCompany() {
     ["name", "location_id"]
   );
   const allAssociates = [];
-  // const allAssociates = await mapContactCompany(allContacts,allCompanies);
 
-  for (let i in allContacts) {
-    const contact = allContacts[i];
+  for (contact of allContacts) {
+    if (!contact) {
+      continue;
+    }
     const companiesAssociateContact =
       await hubspotClient.crm.associations.v4.basicApi.getPage(
         "contact",
         contact.id,
         "company"
       );
-    if (!companiesAssociateContact.results[0]) {
-      // for (let j in allCompanies) {
-      //     const company = allCompanies[j]
-      allCompanies.map(async (company) => {
-        if (contact.properties.country === company.properties.name) {
-          const associate = {
-            assocaites: {
-              contact: {
-                name:
-                  contact.properties.firstname +
-                  " " +
-                  contact.properties.lastname,
-              },
-              company: {
-                name: company.properties.name,
-              },
-            },
-          };
-          allAssociates.push(associate);
-          const createAssociation =
-            await hubspotClient.crm.associations.v4.basicApi.create(
-              "companies",
-              company.id,
-              "contacts",
-              contact.id,
-              [
-                {
-                  associationCategory: "HUBSPOT_DEFINED",
-                  associationTypeId: 2,
-                  // AssociationTypes contains the most popular HubSpot defined association types
-                },
-              ]
-            );
-        }
-      });
-      // }
+    if (companiesAssociateContact.results[0]) {
+      continue;
     }
-  }
-  return allAssociates;
-}
-
-async function mapContactCompany(contacts, companies) {
-  let assocaites = [];
-  contacts.map(async (contact) => {
-    const companiesAssociateContact =
-      await hubspotClient.crm.associations.v4.basicApi.getPage(
-        "contact",
-        contact.id,
-        "company"
-      );
-    if (!companiesAssociateContact.results[0]) {
-      companies.map(async (company) => {
-        if (contact.properties.country === company.properties.name) {
-          const associate = await createAssociateContactCompany(
-            contact,
-            company
-          );
-          assocaites.push(associate);
-        }
-      });
-    }
-  });
-  return assocaites;
-}
-
-async function createAssociateContactCompany(contact, company) {
-  const associate = {
-    assocaites: {
-      contact: {
-        name: contact.properties.firstname + " " + contact.properties.lastname,
-      },
-      company: {
-        name: company.properties.name,
-      },
-    },
-  };
-  const createAssociation =
-    await hubspotClient.crm.associations.v4.basicApi.create(
-      "companies",
-      company.id,
-      "contacts",
-      contact.id,
-      [
-        {
-          associationCategory: "HUBSPOT_DEFINED",
-          associationTypeId: 2,
-          // AssociationTypes contains the most popular HubSpot defined association types
-        },
-      ]
+    const companyToAssociate = allCompanies.find(
+      (company) => company.properties.name == contact.properties.country
     );
+    if (!companyToAssociate) {
+      continue;
+    }
+    const associate = {
+      assocaites: {
+        contact: {
+          name:
+            contact.properties.firstname + " " + contact.properties.lastname,
+        },
+        company: {
+          name: companyToAssociate.properties.name,
+        },
+      },
+    };
+    const createAssociation =
+      await hubspotClient.crm.associations.v4.basicApi.create(
+        "companies",
+        companyToAssociate.id,
+        "contacts",
+        contact.id,
+        [
+          {
+            associationCategory: "HUBSPOT_DEFINED",
+            associationTypeId: 2,
+            // AssociationTypes contains the most popular HubSpot defined association types
+          },
+        ]
+      );
+    console.log(createAssociation);
+    allAssociates.push(associate);
+  }
 
-  return associate;
+  return allAssociates;
 }
 
 module.exports = { getAllAssociates };
