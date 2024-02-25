@@ -13,6 +13,7 @@ const getCreateContact = async (req, res) => {
 
 const postCreateUpdateContact = async(req, res) => {
     const contactBody = req.body;
+    console.log(contactBody);
     if(!contactBody.properties) return res.status(400).send("Bad Request pending for properties in file");
     const contacPropierties = req.body.properties;
     if((!contacPropierties.firstname && !contacPropierties.lastname) || !contacPropierties.status_character|| !contacPropierties.character_species || !contacPropierties.character_gender){

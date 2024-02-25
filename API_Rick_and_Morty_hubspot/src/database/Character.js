@@ -1,4 +1,5 @@
 const DB = require("./db.json");
+const {v4: uuidv4} = require("uuid");
 const hubspot = require('@hubspot/api-client');
 const data_key = require('./private.json');
 
@@ -23,7 +24,8 @@ const postCreateUpdateContact = (contacPropierties) => {
     const { character_id, firstname, lastname, status_character, character_species, character_gender } = contacPropierties;
     const contactNewUpdate = [];
     let aux = 'new';
-    if (character_id.value && (firstname.value || lastname.value) && status_character.value && character_species.value && character_gender.value) {
+    if (character_id.value){
+        //update contact
         contacts.map((contact) => {
             if (contact.character_id == character_id.value) {
                 aux = 'update';
@@ -36,22 +38,48 @@ const postCreateUpdateContact = (contacPropierties) => {
                 contactNewUpdate.push(contact);
             }
         });
-        if (aux == 'new') {
-            const newContact = {
-                "character_id": character_id.value,
-                "firstname": firstname.value,
-                "lastname": lastname.value,
-                "status_character": status_character.value,
-                "character_species": character_species.value,
-                "character_gender": character_gender.value,
-            };
-            contacts.push(newContact);
-            contactNewUpdate.push(newContact);
-            // res.send('create a new contact');
-        } else {
-            // res.send('update contacts');
-        }
+    }else{
+        //create contact
+        const newContact = {
+            "character_id": uuidv4(),
+            "firstname": firstname.value,
+            "lastname": lastname.value,
+            "status_character": status_character.value,
+            "character_species": character_species.value,
+            "character_gender": character_gender.value,
+        };
+        contacts.push(newContact);
+        contactNewUpdate.push(newContact);
     }
+    // if (character_id.value && (firstname.value || lastname.value) && status_character.value && character_species.value && character_gender.value) {
+    //     contacts.map((contact) => {
+    //         if (contact.character_id == character_id.value) {
+    //             aux = 'update';
+    //             contact.firstname = firstname.value;
+    //             contact.lastname = lastname.value;
+    //             contact.status_character = status_character.value;
+    //             contact.character_species = character_species.value;
+    //             contact.character_gender = character_gender.value;
+    //             console.log("\ncontact:\n", contact);
+    //             contactNewUpdate.push(contact);
+    //         }
+    //     });
+    //     if (aux == 'new') {
+    //         const newContact = {
+    //             "character_id": character_id.value,
+    //             "firstname": firstname.value,
+    //             "lastname": lastname.value,
+    //             "status_character": status_character.value,
+    //             "character_species": character_species.value,
+    //             "character_gender": character_gender.value,
+    //         };
+    //         contacts.push(newContact);
+    //         contactNewUpdate.push(newContact);
+    //         // res.send('create a new contact');
+    //     } else {
+    //         // res.send('update contacts');
+    //     }
+    // }
     // else{
     //     res.status(500).json({error: 'There was an error.'});
     // }
