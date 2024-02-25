@@ -8,7 +8,7 @@ const hubspotClient = new hubspot.Client({ accessToken: data_key.key });
 const url_character = "https://rickandmortyapi.com/api/character";
 let contacts;
 
-functionContacts(url_character).then((data) => (contacts = data));
+functionCharacters(url_character).then((data) => (contacts = data));
 
 const getAllCharacters = () => {
   return contacts;
@@ -20,85 +20,12 @@ const getCreateCharacters = async (contacts) => {
 };
 
 const postCreateUpdateContact = async (contacPropierties) => {
-  const {
-    character_id,
-    firstname,
-    lastname,
-    status_character,
-    character_species,
-    character_gender,
-    hs_object_id,
-  } = contacPropierties;
-  if (character_id) {
-    //update contact
-    const contactToUpdate = contacts.find(
-      (contact) => contact.character_id == character_id.value
-    );
-    console.log("\nTest find\n", contactToUpdate);
-    contactToUpdate.firstname = firstname.value;
-    contactToUpdate.lastname = lastname.value;
-    contactToUpdate.status_character = status_character.value;
-    contactToUpdate.character_species = character_species.value;
-    contactToUpdate.character_gender = character_gender.value;
-    return contactToUpdate;
-  } else {
-    //create contact in characters an update character_id in contacts
-    const newContact = await createNewCharacter(
-      firstname.value,
-      lastname.value,
-      status_character.value,
-      character_species.value,
-      character_gender.value,
-      hs_object_id.value
-    );
-    contacts.push(newContact);
-    return newContact;
-  }
+  const createUpdateContact = await createUpdateCharacters(
+    contacPropierties,
+    contacts
+  );
+  return createUpdateContact;
 };
-
-async function createNewCharacter(
-  firstname,
-  lastname,
-  status_character,
-  character_species,
-  character_gender,
-  hs_object_id
-) {
-  const id = uuidv4();
-  const newContact = {
-    character_id: id,
-    firstname: firstname,
-    lastname: lastname,
-    status_character: status_character,
-    character_species: character_species,
-    character_gender: character_gender,
-  };
-  // contactNewUpdate.push(newContact);
-  console.log("New Contact");
-  console.log(hs_object_id);
-  const BatchInputSimplePublicObjectBatchInput = {
-    inputs: [
-      {
-        id: hs_object_id,
-        properties: {
-          character_id: id,
-        },
-      },
-    ],
-  };
-  console.log(BatchInputSimplePublicObjectBatchInput);
-  try {
-    const apiResponse = await hubspotClient.crm.contacts.batchApi.update(
-      BatchInputSimplePublicObjectBatchInput
-    );
-    console.log(JSON.stringify(apiResponse, null, 2));
-    return newContact;
-  } catch (e) {
-    e.message === "HTTP request failed"
-      ? console.error(JSON.stringify(e.response, null, 2))
-      : console.error(e);
-  }
-}
 
 function arrayPrimeNumber(number) {
   const array_number = [1];
@@ -112,7 +39,8 @@ function arrayPrimeNumber(number) {
   return array_number;
 }
 
-async function functionContacts(url) {
+//Function for call all characters from API Rick and Morty
+async function functionCharacters(url) {
   // First call of characters ---> this call is to know the total characters
   const firstResponse = await fetch(url);
   const firstCharacters = await firstResponse.json();
@@ -150,6 +78,7 @@ async function functionContacts(url) {
   return data;
 }
 
+//Funnction for create contacts in hubspot from this api
 async function createContact(characters) {
   if (!characters) return;
   const allContacts = await hubspotClient.crm.contacts.getAll(
@@ -190,6 +119,82 @@ async function createContact(characters) {
     }
   });
   return contactCreates;
+}
+
+async function createUpdateCharacters(contacPropierties, contacts) {
+  if (!contacts) return [];
+  const {
+    character_id,
+    firstname,
+    lastname,
+    status_character,
+    character_species,
+    character_gender,
+    hs_object_id,
+  } = contacPropierties;
+  if (character_id) {
+    //update contact
+    const contactToUpdate = contacts.find(
+      (contact) => contact.character_id == character_id.value
+    );
+    contactToUpdate.firstname = firstname.value;
+    contactToUpdate.lastname = lastname.value;
+    contactToUpdate.status_character = status_character.value;
+    contactToUpdate.character_species = character_species.value;
+    contactToUpdate.character_gender = character_gender.value;
+    return contactToUpdate;
+  } else {
+    //create contact in characters an update character_id in contacts
+    const newContact = await createNewCharacter(
+      firstname.value,
+      lastname.value,
+      status_character.value,
+      character_species.value,
+      character_gender.value,
+      hs_object_id.value
+    );
+    contacts.push(newContact);
+    return newContact;
+  }
+}
+
+async function createNewCharacter(
+  firstname,
+  lastname,
+  status_character,
+  character_species,
+  character_gender,
+  hs_object_id
+) {
+  const id = uuidv4();
+  const newContact = {
+    character_id: id,
+    firstname: firstname,
+    lastname: lastname,
+    status_character: status_character,
+    character_species: character_species,
+    character_gender: character_gender,
+  };
+  const BatchInputSimplePublicObjectBatchInput = {
+    inputs: [
+      {
+        id: hs_object_id,
+        properties: {
+          character_id: id,
+        },
+      },
+    ],
+  };
+  try {
+    const apiResponse = await hubspotClient.crm.contacts.batchApi.update(
+      BatchInputSimplePublicObjectBatchInput
+    );
+    return newContact;
+  } catch (e) {
+    e.message === "HTTP request failed"
+      ? console.error(JSON.stringify(e.response, null, 2))
+      : console.error(e);
+  }
 }
 
 module.exports = {
