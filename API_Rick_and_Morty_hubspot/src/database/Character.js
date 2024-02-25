@@ -21,7 +21,7 @@ const getCreateCharacters = async (contacts) => {
 
 const postCreateUpdateContact = (contacPropierties) => {
     
-    const { character_id, firstname, lastname, status_character, character_species, character_gender } = contacPropierties;
+    const { character_id, firstname, lastname, status_character, character_species, character_gender, hs_object_id } = contacPropierties;
     const contactNewUpdate = [];
     let aux = 'new';
     if (character_id.value){
@@ -40,8 +40,9 @@ const postCreateUpdateContact = (contacPropierties) => {
         });
     }else{
         //create contact
+        const id = uuidv4();
         const newContact = {
-            "character_id": uuidv4(),
+            "character_id": id,
             "firstname": firstname.value,
             "lastname": lastname.value,
             "status_character": status_character.value,
@@ -50,6 +51,24 @@ const postCreateUpdateContact = (contacPropierties) => {
         };
         contacts.push(newContact);
         contactNewUpdate.push(newContact);
+        console.log("New Contact");
+        console.log(hs_object_id.value);
+        const BatchInputSimplePublicObjectBatchInput = { inputs: [
+            {   
+                "id":hs_object_id.value,
+                "properties":{
+                    "character_id":id
+                }
+            }] };
+        console.log(BatchInputSimplePublicObjectBatchInput);
+        // try {
+        //   const apiResponse = await hubspotClient.crm.contacts.batchApi.update(BatchInputSimplePublicObjectBatchInput);
+        //   console.log(JSON.stringify(apiResponse, null, 2));
+        // } catch (e) {
+        //   e.message === 'HTTP request failed'
+        //     ? console.error(JSON.stringify(e.response, null, 2))
+        //     : console.error(e)
+        // }
     }
     // if (character_id.value && (firstname.value || lastname.value) && status_character.value && character_species.value && character_gender.value) {
     //     contacts.map((contact) => {
