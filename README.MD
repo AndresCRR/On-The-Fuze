@@ -316,11 +316,18 @@ async function associationContactCompany() {
 ## INTEGRATION HUBSPOT WHIT API
 
 Finally, i created the integration between private app of hubspot and this API,then i need to create two workflows in my private app
-![]('./image/workflow_company.png')
-
-![]('./image/workflow_contact.png')
 
 ### INTEGRATION CONTACTS
+<p align="center">
+  <a>
+    <img src="./static/images/workflow_contact.png" alt="Node.js logo" height="500">
+  </a>
+</p>
+
+This workflow send a method post where we received in the next link
+
+- /api/v1/characters -> https://api-rick-and-morty-hubspot.onrender.com/api/v1/characters
+
 ```javascript
 const postCreateUpdateContact = async (contacPropierties) => {
   const createUpdateContact = await createUpdateCharacters(
@@ -408,7 +415,17 @@ async function createNewCharacter(
 }
 ```
 
-### INTEGRATION COMPANIES 
+### INTEGRATION COMPANIES
+<p align="center">
+  <a>
+    <img src="./static/images/workflow_company.png" alt="Node.js logo" height="500">
+  </a>
+</p>
+
+This workflow send a method post where we received in the next link
+
+- /api/v1/locations -> https://api-rick-and-morty-hubspot.onrender.com/api/v1/locations
+
 ```javascript
 const postCreateUpdateCompany = async (locationPropierties) => {
   const createUpdateCompany = await createUpdateLocations(
