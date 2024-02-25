@@ -8,8 +8,8 @@ const getCreateContact = async (characters) => {
     const createContact = await Character.getCreateCharacters(characters);
     return createContact;
 };
-const postCreateUpdateContact = (contacPropierties) => {
-    const createUpdateContact = Character.postCreateUpdateContact(contacPropierties);
+const postCreateUpdateContact = async(contacPropierties) => {
+    const createUpdateContact = await Character.postCreateUpdateContact(contacPropierties);
     return createUpdateContact;
 };
 
