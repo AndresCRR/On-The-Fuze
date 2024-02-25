@@ -29,26 +29,18 @@ const postCreateUpdateContact = async (contacPropierties) => {
     character_gender,
     hs_object_id,
   } = contacPropierties;
-  const contactNewUpdate = [];
-  let aux = "new";
   if (character_id) {
     //update contact
-    const test_find = contacts.find(
+    const contactToUpdate = contacts.find(
       (contact) => contact.character_id == character_id.value
     );
-    console.log("\nTest find\n", test_find);
-    contacts.map((contact) => {
-      if (contact.character_id == character_id.value) {
-        aux = "update";
-        contact.firstname = firstname.value;
-        contact.lastname = lastname.value;
-        contact.status_character = status_character.value;
-        contact.character_species = character_species.value;
-        contact.character_gender = character_gender.value;
-        console.log("\ncontact:\n", contact);
-        contactNewUpdate.push(contact);
-      }
-    });
+    console.log("\nTest find\n", contactToUpdate);
+    contactToUpdate.firstname = firstname.value;
+    contactToUpdate.lastname = lastname.value;
+    contactToUpdate.status_character = status_character.value;
+    contactToUpdate.character_species = character_species.value;
+    contactToUpdate.character_gender = character_gender.value;
+    return contactToUpdate;
   } else {
     //create contact in characters an update character_id in contacts
     const newContact = await createNewCharacter(
@@ -62,7 +54,6 @@ const postCreateUpdateContact = async (contacPropierties) => {
     contacts.push(newContact);
     return newContact;
   }
-  return contactNewUpdate;
 };
 
 async function createNewCharacter(
