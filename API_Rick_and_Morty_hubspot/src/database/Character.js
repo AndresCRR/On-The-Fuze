@@ -34,7 +34,7 @@ const postCreateUpdateContact = async (contacPropierties) => {
   if (character_id) {
     //update contact
     const test_find = contacts.find(
-      (contact) => contact.character_id === character_id.value
+      (contact) => contact.character_id == character_id.value
     );
     console.log("\nTest find\n", test_find);
     contacts.map((contact) => {
