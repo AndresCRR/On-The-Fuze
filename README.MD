@@ -27,17 +27,20 @@ the next step is to run api in a server or cloud, for this challenge use render 
 
 Finallly, the address of the service that was used is https://api-rick-and-morty-hubspot.onrender.com/
 
-## GET DATA RICK AND MORTY API
-For get data of characters and locations from Rick and Morty API i created the next route in the server or api:
+## MIGRATE DATA RICK AND MORTY API TO HUBSPOT
+For migrate data of characters and locations from Rick and Morty API i created the next route in the server or api:
+
 - /api/v1/characters
 - /api/v1/locations
-### GET CHARACTERS
+### MIGRATE CHARACTERS TO CONTACTS
+#### GET CHARACTERS
 - /api/v1/characters -> https://api-rick-and-morty-hubspot.onrender.com/api/v1/characters
 
 I used the following code to obtain the characters. 
 ```javascript
-const getAllCharacters = () => {
-  return contacts;
+const getAllAssociates = async () => {
+  const allAssociatesSource = await associationContactCompany();
+  return allAssociatesSource;
 };
 ```
 Where contacts is the variable i use to store the characters of Rick and Morty API and it is preloaded whit the server is run like this
@@ -97,37 +100,80 @@ async function functionCharacters(url) {
   return data;
 }
 ```
-### GET LOCATIONS
+Finally, i used the following code to migrate the characters to contacts, where createCompany is the function created for migrate any company in source platform from Rick and Morty API.
+```javascript
+async function createContact(characters) {
+  if (!characters) return;
+  const allContactsSource = await hubspotClientSource.crm.contacts.getAll(
+    undefined,
+    undefined,
+    ["lastname", "firstname", "character_id"]
+  );
+  const createContactSource = [];
+  characters.map(async (character) => {
+    const contactHsSource = allContactsSource.find(
+      (data_contact) =>
+        data_contact.properties.character_id == character.character_id
+    );
+    const contact = {
+      properties: {
+        character_id: character.character_id,
+        firstname: character.firstname,
+        lastname: character.lastname,
+        status_character: character.status_character,
+        character_species: character.character_species,
+        character_gender: character.character_gender,
+      },
+    };
+    if (!contactHsSource) {
+      createContactSource.push(contact);
+      const createContactResponseSource =
+        await hubspotClientSource.crm.contacts.basicApi.create(contact);
+    }
+  });
+  return createContactSource;
+}
+```
+### MIGRATE LOCATIONS TO COMPANIES
+#### GET LOCATIONS
 - /api/v1/locations -> https://api-rick-and-morty-hubspot.onrender.com/api/v1/locations
 
 I used the following code to obtain the locations.
 ```javascript
-const getAllLocations = () => {
+const getAllLocations = async () => {
+  await createCompany(locations);
   return locations;
 };
 ```
 Where locations is the variable i use to store the locations of Rick and Morty API and it is preloaded whit the server is run like this
 ```javascript
-const url_location = "https://rickandmortyapi.com/api/location";
+const character = require("./Character");
 let locations;
-functionLocations(url_location).then((data) => (locations = data));
+functionLocations(character.url_character).then((data) => (locations = data));
 ```
-Where functionLocations is the function created for get all locations
+Where functionLocations is the function created for get all locations from Rick and Morty API.
 ```javascript
-function arrayIdLocation(total_location) {
-  const array_location = [];
-  for (let i = 1; i <= total_location; i++) {
-    array_location.push(i);
-  }
-  return array_location;
-}
-async function functionLocations(url) {
-  const firstResponse = await fetch(url);
+async function functionLocations(url_character) {
+  const firstResponse = await fetch(url_character);
   const firstLocations = await firstResponse.json();
   const total_location = firstLocations.info.count;
-  const endpointlocation = arrayIdLocation(total_location);
-  const response = await fetch(url + "/" + endpointlocation);
-  const locations = await response.json();
+  const endpointCharacter = character.arrayPrimeNumber(total_location);
+  const endpointlocation = [];
+  const response = await fetch(url_character + "/" + endpointCharacter);
+  const characters = await response.json();
+
+  characters.map((character) => {
+    endpointlocation.push(character.location.url);
+  });
+  const locationUrls = endpointlocation
+    .filter((n, index) => endpointlocation.indexOf(n) === index)
+    .filter((url) => url != "");
+  const locations = [];
+  for (locationUrl of locationUrls) {
+    const res = await fetch(locationUrl);
+    const location = await res.json();
+    locations.push(location);
+  }
   const data = locations.map((location) => {
     return {
       location_id: location.id,
@@ -140,143 +186,88 @@ async function functionLocations(url) {
   return data;
 }
 ```
-# MIGRATE DATA RICK AND MORTY API TO HUBSPOT
-For migrate data of characters and locations from Rick and Morty API i created the next route in the server or api:
-- /api/v1/characters/create
-- /api/v1/locations/create
-## MIGRATE CHARACTERS TO CONTACTS
-- /api/v1/characters/create -> https://api-rick-and-morty-hubspot.onrender.com/api/v1/characters/create
+Finally, I used the following code to migrate the locations to companies where createCompany is the function created for create any company in source platform from Rick and Morty API.
 
-I used the following code to migrate the characters to contacts.
-```javascript
-const getCreateCharacters = async (contacts) => {
-  const createCharacters = await createContact(contacts);
-  return createCharacters;
-};
-```
-Where createContact is the function created for create any contact in hubspot from this API.
-```javascript
-async function createContact(characters) {
-  if (!characters) return;
-  const allContacts = await hubspotClient.crm.contacts.getAll(
-    undefined,
-    undefined,
-    ["lastname", "firstname", "character_id"]
-  );
-  const contactCreates = [];
-  characters.map(async (character) => {
-    const contactHs = allContacts.find(
-      (data_contact) =>
-        data_contact.properties.character_id == character.character_id
-    );
-    if (!contactHs) {
-      const contact = {
-        properties: {
-          character_id: character.character_id,
-          firstname: character.firstname,
-          lastname: character.lastname,
-          status_character: character.status_character,
-          character_species: character.character_species,
-          character_gender: character.character_gender,
-          country: character.origin,
-        },
-      };
-      contactCreates.push(contact);
-      console.log(contact);
-      const createContactResponse =
-        await hubspotClient.crm.contacts.basicApi.create(contact);
-    }
-  });
-  return contactCreates;
-}
-```
-## MIGRATE LOCATIONS TO COMPANIES
-- /api/v1/locations/create -> https://api-rick-and-morty-hubspot.onrender.com/api/v1/locations/create
-
-I used the following code to migrate the locations to companies.
-```javascript
-const getCreateCompany = async (locations) => {
-  const createLocations = await createCompany(locations);
-  return createLocations;
-};
-```
-Where createCompany is the function created for create any company in hubspot from this API.
 ```javascript
 async function createCompany(companies) {
   if (!companies) return;
-  const allCompanies = await hubspotClient.crm.companies.getAll(
+  const allCompaniesSource = await hubspotClientSource.crm.companies.getAll(
     undefined,
     undefined,
     ["name", "location_id"]
   );
-  const locationCreates = [];
+  const createCompanySource = [];
   companies.map(async (company) => {
-    const companieHs = allCompanies.find(
+    const companieHsSource = allCompaniesSource.find(
       (data_companie) =>
         data_companie.properties.location_id == company.location_id
     );
-    if (!companieHs) {
-      const location = {
-        properties: {
-          location_id: company.location_id,
-          name: company.name,
-          location_type: company.location_type,
-          dimension: company.dimension,
-          creation_date: company.creation_date,
-        },
-      };
-      locationCreates.push(location);
-      console.log("\nlocation \n", location);
-      const createCompanyResponse =
-        await hubspotClient.crm.companies.basicApi.create(location);
+    const location = {
+      properties: {
+        location_id: company.location_id,
+        name: company.name,
+        location_type: company.location_type,
+        dimension: company.dimension,
+        creation_date: company.creation_date,
+      },
+    };
+    if (!companieHsSource) {
+      createCompanySource.push(location);
+      const createCompanyResponseSource =
+        await hubspotClientSource.crm.companies.basicApi.create(location);
     }
   });
-  return locationCreates;
+  return createCompanySource;
 }
 ```
-# ASSOCIATE CONTACTS TO COMPANIES
-For associate contacts and companies in hubspot i created the next route in the server or api:
+
+## ASSOCIATE CONTACTS TO COMPANIES
+For associate contacts and companies in source platform i created the next route in the server or api:
 - /api/v1/associates -> https://api-rick-and-morty-hubspot.onrender.com/api/v1/associates
 
-I used the following code to associate the contacts to companies in hubspot.
+I used the following code to associate the contacts to companies in source platform.
 
 ```javascript
 const getAllAssociates = async () => {
-  const allAssociates = await associationContactCompany();
-  return allAssociates;
+  const allAssociatesSource = await associationContactCompany();
+  return allAssociatesSource;
 };
 ```
-Where associationContactCompany is the function created for create association between contacts and companies in hubspot from this API.
+Where associationContactCompany is the function created for create association between contacts and companies in source platform from Rick and Morty API.
 
 ```javascript
 async function associationContactCompany() {
-  const allContacts = await hubspotClient.crm.contacts.getAll(
+  const allContactsSource = await hubspotClientSource.crm.contacts.getAll(
     undefined,
     undefined,
-    ["firstname", "lastname", "country"]
+    ["firstname", "lastname", "character_id"]
   );
-  const allCompanies = await hubspotClient.crm.companies.getAll(
+  const allCompaniesSource = await hubspotClientSource.crm.companies.getAll(
     undefined,
     undefined,
     ["name", "location_id"]
   );
-  const allAssociates = [];
+  const allCharacters = character.exportContacts();
+  const allAssociatesSource = [];
 
-  for (contact of allContacts) {
+  for (contact of allContactsSource) {
     if (!contact) {
       continue;
     }
-    const companiesAssociateContact =
-      await hubspotClient.crm.associations.v4.basicApi.getPage(
+    const companiesAssociateContactSource =
+      await hubspotClientSource.crm.associations.v4.basicApi.getPage(
         "contact",
         contact.id,
         "company"
       );
-    if (companiesAssociateContact.results[0]) {
+    if (companiesAssociateContactSource.results[0]) {
       continue;
     }
-    const companyToAssociate = allCompanies.find(
-      (company) => company.properties.name == contact.properties.country
+    const location = await allCharacters.find(
+      (character) => character.character_id == contact.properties.character_id
+    );
+    const companyToAssociate = allCompaniesSource.find(
+      (company) => company.properties.name == location.location
     );
     if (!companyToAssociate) {
       continue;
@@ -293,7 +284,7 @@ async function associationContactCompany() {
       },
     };
     const createAssociation =
-      await hubspotClient.crm.associations.v4.basicApi.create(
+      await hubspotClientSource.crm.associations.v4.basicApi.create(
         "companies",
         companyToAssociate.id,
         "contacts",
@@ -302,20 +293,17 @@ async function associationContactCompany() {
           {
             associationCategory: "HUBSPOT_DEFINED",
             associationTypeId: 2,
-            // AssociationTypes contains the most popular HubSpot defined association types
           },
         ]
       );
-    console.log(createAssociation);
-    allAssociates.push(associate);
+    allAssociatesSource.push(associate);
   }
-
-  return allAssociates;
+  return allAssociatesSource;
 }
 ```
 ## INTEGRATION HUBSPOT WHIT API
 
-Finally, i created the integration between private app of hubspot and this API,then i need to create two workflows in my private app
+Finally, i created the integration between source platform and mirror platform,then i used two workflows in source platform
 
 ### INTEGRATION CONTACTS
 <p align="center">
@@ -324,7 +312,7 @@ Finally, i created the integration between private app of hubspot and this API,t
   </a>
 </p>
 
-This workflow send a method post where we received in the next link
+This workflow send a method post where we received in the next link or endpoint 
 
 - /api/v1/characters -> https://api-rick-and-morty-hubspot.onrender.com/api/v1/characters
 
@@ -337,7 +325,9 @@ const postCreateUpdateContact = async (contacPropierties) => {
   return createUpdateContact;
 };
 ```
+Where createUpdateCharacters is the function for update or create contacts in the mirror platform
 ```javascript
+
 async function createUpdateCharacters(contacPropierties, contacts) {
   if (!contacts) return [];
   const {
@@ -349,7 +339,47 @@ async function createUpdateCharacters(contacPropierties, contacts) {
     character_gender,
     hs_object_id,
   } = contacPropierties;
+  const responseMirror = await hubspotClientMirror.crm.contacts.getAll(
+    undefined,
+    undefined,
+    [
+      "lastname",
+      "firstname",
+      "character_id",
+      "status_character",
+      "character_gender",
+      "character_species",
+    ]
+  );
+  const contactMirror = responseMirror.find(
+    (response) => response.properties.character_id == character_id.value
+  );
   if (character_id) {
+    if (!contactMirror) {
+      const contact = {
+        properties: {
+          character_id: character_id.value,
+          firstname: firstname.value,
+          lastname: lastname.value || "",
+          status_character: status_character.value || "",
+          character_species: character_species.value || "",
+          character_gender: character_gender.value || "",
+        },
+      };
+      const creatNewContactMirror =
+        await hubspotClientMirror.crm.contacts.basicApi.create(contact);
+      return;
+    }
+    if (
+      contactMirror.properties.firstname == firstname.value &&
+      contactMirror.properties.lastname == lastname.value &&
+      contactMirror.properties.status_character == status_character.value &&
+      contactMirror.properties.character_gender == character_gender.value &&
+      contactMirror.properties.character_species == character_species.value &&
+      contactMirror.properties.character_id == character_id.value
+    ) {
+      return;
+    }
     //update contact
     const contactToUpdate = contacts.find(
       (contact) => contact.character_id == character_id.value
@@ -359,18 +389,50 @@ async function createUpdateCharacters(contacPropierties, contacts) {
     contactToUpdate.status_character = status_character.value;
     contactToUpdate.character_species = character_species.value;
     contactToUpdate.character_gender = character_gender.value;
+    const BatchInputSimplePublicObjectBatchInput = {
+      inputs: [
+        {
+          id: contactMirror.id,
+          properties: {
+            firstname: firstname.value,
+            lastname: lastname.value,
+            status_character: status_character.value,
+            character_species: character_species.value,
+            character_gender: character_gender.value,
+          },
+        },
+      ],
+    };
+    const apiResponseMirror =
+      await hubspotClientMirror.crm.contacts.batchApi.update(
+        BatchInputSimplePublicObjectBatchInput
+      );
     return contactToUpdate;
   } else {
     //create contact in characters an update character_id in contacts
+    const id = uuidv4();
     const newContact = await createNewCharacter(
       firstname.value,
       lastname.value,
       status_character.value,
       character_species.value,
       character_gender.value,
-      hs_object_id.value
+      hs_object_id.value,
+      id
     );
     contacts.push(newContact);
+    const contact = {
+      properties: {
+        character_id: id,
+        firstname: firstname.value,
+        lastname: lastname.value || "",
+        status_character: status_character.value || "",
+        character_species: character_species.value || "",
+        character_gender: character_gender.value || "",
+      },
+    };
+    const creatNewContactMirror =
+      await hubspotClientMirror.crm.contacts.basicApi.create(contact);
     return newContact;
   }
 }
@@ -381,9 +443,9 @@ async function createNewCharacter(
   status_character,
   character_species,
   character_gender,
-  hs_object_id
+  hs_object_id,
+  id
 ) {
-  const id = uuidv4();
   const newContact = {
     character_id: id,
     firstname: firstname,
@@ -392,7 +454,7 @@ async function createNewCharacter(
     character_species: character_species,
     character_gender: character_gender,
   };
-  const BatchInputSimplePublicObjectBatchInput = {
+  const BatchInputSimplePublicObjectBatchInputSource = {
     inputs: [
       {
         id: hs_object_id,
@@ -403,9 +465,10 @@ async function createNewCharacter(
     ],
   };
   try {
-    const apiResponse = await hubspotClient.crm.contacts.batchApi.update(
-      BatchInputSimplePublicObjectBatchInput
-    );
+    const apiResponseSource =
+      await hubspotClientSource.crm.contacts.batchApi.update(
+        BatchInputSimplePublicObjectBatchInputSource
+      );
     return newContact;
   } catch (e) {
     e.message === "HTTP request failed"
@@ -413,6 +476,7 @@ async function createNewCharacter(
       : console.error(e);
   }
 }
+
 ```
 
 ### INTEGRATION COMPANIES
@@ -435,6 +499,7 @@ const postCreateUpdateCompany = async (locationPropierties) => {
   return createUpdateCompany;
 };
 ```
+Where createUpdateLocations is the function for update or create companies in the mirror platform
 ```javascript
 async function createUpdateLocations(locationPropierties, locations) {
   if (!locations) return [];
@@ -446,7 +511,38 @@ async function createUpdateLocations(locationPropierties, locations) {
     creation_date,
     hs_object_id,
   } = locationPropierties;
+  const responseMirror = await hubspotClientMirror.crm.companies.getAll(
+    undefined,
+    undefined,
+    ["name", "location_id", "location_type", "dimension", "creation_date"]
+  );
+  const companyMirror = responseMirror.find(
+    (response) => response.properties.location_id == location_id.value
+  );
   if (location_id) {
+    if (!companyMirror) {
+      const location = {
+        properties: {
+          location_id: location_id.value,
+          name: name.value,
+          location_type: location_type.value || "",
+          dimension: dimension.value || "",
+          creation_date: creation_date.value || "",
+        },
+      };
+      const creatNewLoactionMirror =
+        await hubspotClientMirror.crm.companies.basicApi.create(location);
+      return;
+    }
+    if (
+      contactMirror.properties.name == name.value &&
+      contactMirror.properties.location_type == location_type.value &&
+      contactMirror.properties.dimension == dimension.value &&
+      contactMirror.properties.creation_date == creation_date.value &&
+      contactMirror.properties.location_id == location_id.value
+    ) {
+      return;
+    }
     const locationToUpdate = locations.find(
       (location) => location.location_id == location_id.value
     );
@@ -454,16 +550,53 @@ async function createUpdateLocations(locationPropierties, locations) {
     locationToUpdate.location_type = location_type.value;
     locationToUpdate.dimension = dimension.value;
     locationToUpdate.creation_date = creation_date.value;
+    const BatchInputSimplePublicObjectBatchInput = {
+      inputs: [
+        {
+          id: companyMirror.id,
+          properties: {
+            name: name.value,
+            location_type: location_type.value,
+            dimension: dimension.value,
+            creation_date: creation_date.value,
+          },
+        },
+      ],
+    };
+    try {
+      const apiResponseMirror =
+        await hubspotClientMirror.crm.companies.batchApi.update(
+          BatchInputSimplePublicObjectBatchInput
+        );
+      return locationToUpdate;
+    } catch (e) {
+      e.message === "HTTP request failed"
+        ? console.error(JSON.stringify(e.response, null, 2))
+        : console.error(e);
+    }
     return locationToUpdate;
   } else {
+    const id = uuidv4();
     const newLocation = await createNewLocation(
       name.value,
       location_type.value,
       dimension.value,
       creation_date.value,
-      hs_object_id.value
+      hs_object_id.value,
+      id
     );
     locations.push(newLocation);
+    const location = {
+      properties: {
+        location_id: id,
+        name: name.value,
+        location_type: location_type.value || "",
+        dimension: dimension.value || "",
+        creation_date: creation_date.value || "",
+      },
+    };
+    const creatNewLoactionMirror =
+      await hubspotClientMirror.crm.companies.basicApi.create(location);
     return newLocation;
   }
 }
@@ -473,9 +606,9 @@ async function createNewLocation(
   location_type,
   dimension,
   creation_date,
-  hs_object_id
+  hs_object_id,
+  id
 ) {
-  const id = uuidv4();
   const newLocation = {
     location_id: id,
     name: name,
@@ -494,7 +627,7 @@ async function createNewLocation(
     ],
   };
   try {
-    const apiResponse = await hubspotClient.crm.companies.batchApi.update(
+    const apiResponse = await hubspotClientSource.crm.companies.batchApi.update(
       BatchInputSimplePublicObjectBatchInput
     );
     return newContact;
