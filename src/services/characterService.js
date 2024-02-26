@@ -1,13 +1,8 @@
 const Character = require("../database/Character");
 
-const getALLCharacters = () => {
-  const allCharacters = Character.getAllCharacters();
+const getALLCharacters = async () => {
+  const allCharacters = await Character.getAllCharacters();
   return allCharacters;
-};
-const getCreateContact = async (characters) => {
-  const { createContactSource, createContactMirror } =
-    await Character.getCreateCharacters(characters);
-  return { createContactSource, createContactMirror };
 };
 const postCreateUpdateContact = async (contacPropierties) => {
   const createUpdateContact = await Character.postCreateUpdateContact(
@@ -18,6 +13,5 @@ const postCreateUpdateContact = async (contacPropierties) => {
 
 module.exports = {
   getALLCharacters,
-  getCreateContact,
   postCreateUpdateContact,
 };

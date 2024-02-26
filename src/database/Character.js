@@ -17,15 +17,9 @@ functionCharacters(url_character).then((data) => {
   contacts = data;
 });
 
-const getAllCharacters = () => {
+const getAllCharacters = async () => {
+  await createContact(contacts);
   return contacts;
-};
-
-const getCreateCharacters = async (contacts) => {
-  const { createContactSource, createContactMirror } = await createContact(
-    contacts
-  );
-  return { createContactSource, createContactMirror };
 };
 
 const postCreateUpdateContact = async (contacPropierties) => {
@@ -81,7 +75,7 @@ async function functionCharacters(url) {
       status_character: character.status,
       character_species: character.species,
       character_gender: character.gender,
-      origin: character.origin.name,
+      location: character.location.name,
     };
   });
   return data;
@@ -119,7 +113,6 @@ async function createContact(characters) {
         status_character: character.status_character,
         character_species: character.character_species,
         character_gender: character.character_gender,
-        country: character.origin,
       },
     };
     if (!contactHsSource) {
@@ -165,7 +158,6 @@ async function createUpdateCharacters(contacPropierties, contacts) {
     contactToUpdate.status_character = status_character.value;
     contactToUpdate.character_species = character_species.value;
     contactToUpdate.character_gender = character_gender.value;
-    console.log(contactToUpdate);
     const BatchInputSimplePublicObjectBatchInput = {
       inputs: [
         {
@@ -261,10 +253,14 @@ async function createNewCharacter(
   }
 }
 
+function exportContacts() {
+  return contacts;
+}
+
 module.exports = {
   getAllCharacters,
-  getCreateCharacters,
   postCreateUpdateContact,
   arrayPrimeNumber,
   url_character,
+  exportContacts,
 };

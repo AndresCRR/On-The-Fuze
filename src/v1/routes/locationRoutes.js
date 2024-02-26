@@ -4,7 +4,6 @@ const router = Router();
 
 router
   .get("/", locationController.getAllLocations)
-  .get("/create", locationController.getCreateCompany)
   .post("/", locationController.postCreateUpdateCompany);
 
 module.exports = router;

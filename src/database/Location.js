@@ -15,15 +15,9 @@ let locations;
 
 functionLocations(character.url_character).then((data) => (locations = data));
 
-const getAllLocations = () => {
+const getAllLocations = async () => {
+  await createCompany(locations);
   return locations;
-};
-
-const getCreateCompany = async (locations) => {
-  const { createCompanySource, createCompanyMirror } = await createCompany(
-    locations
-  );
-  return { createCompanySource, createCompanyMirror };
 };
 
 const postCreateUpdateCompany = async (locationPropierties) => {
@@ -229,6 +223,5 @@ async function createNewLocation(
 
 module.exports = {
   getAllLocations,
-  getCreateCompany,
   postCreateUpdateCompany,
 };

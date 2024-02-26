@@ -4,7 +4,6 @@ const router = Router();
 
 router
   .get("/", characterController.getAllCharacters)
-  .get("/create", characterController.getCreateContact)
   .post("/", characterController.postCreateUpdateContact);
 
 module.exports = router;

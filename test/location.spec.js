@@ -14,19 +14,6 @@ describe("GET /api/v1/locations", () => {
   });
 });
 
-describe("GET /api/v1/locations/create", () => {
-  test("should respond whit a 200 status code", async () => {
-    const response = await request(app).get("/api/v1/locations/create").send();
-    expect(response.statusCode).toBe(200);
-  });
-  test("should have a content-type : application/json", async () => {
-    const response = await request(app).get("/api/v1/locations/create").send();
-    expect(response.headers["content-type"]).toEqual(
-      expect.stringContaining("json")
-    );
-  });
-});
-
 describe("POST /api/v1/locations", () => {
   describe("When send a correct file format", () => {
     const testCompany = {

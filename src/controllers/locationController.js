@@ -1,20 +1,8 @@
 const locationService = require("../services/locationService");
 
-const getAllLocations = (req, res) => {
-  const allLocations = locationService.getAllLocations();
+const getAllLocations = async (req, res) => {
+  const allLocations = await locationService.getAllLocations();
   res.send({ status: "OK", data: allLocations });
-};
-
-const getCreateCompany = async (req, res) => {
-  const allLocations = locationService.getAllLocations();
-  const { createCompanySource, createCompanyMirror } =
-    await locationService.getCreateCompany(allLocations);
-  res.send({
-    status: "OK",
-    action: "Create",
-    data_source: createCompanySource,
-    data_mirror: createCompanyMirror,
-  });
 };
 
 const postCreateUpdateCompany = async (req, res) => {
@@ -40,6 +28,5 @@ const postCreateUpdateCompany = async (req, res) => {
 
 module.exports = {
   getAllLocations,
-  getCreateCompany,
   postCreateUpdateCompany,
 };

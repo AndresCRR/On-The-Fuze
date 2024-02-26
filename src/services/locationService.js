@@ -1,13 +1,8 @@
 const Location = require("../database/Location");
 
-const getAllLocations = () => {
-  const allLocations = Location.getAllLocations();
+const getAllLocations = async () => {
+  const allLocations = await Location.getAllLocations();
   return allLocations;
-};
-const getCreateCompany = async (locations) => {
-  const { createCompanySource, createCompanyMirror } =
-    await Location.getCreateCompany(locations);
-  return { createCompanySource, createCompanyMirror };
 };
 const postCreateUpdateCompany = async (locationPropierties) => {
   const createUpdateCompany = await Location.postCreateUpdateCompany(
@@ -18,6 +13,5 @@ const postCreateUpdateCompany = async (locationPropierties) => {
 
 module.exports = {
   getAllLocations,
-  getCreateCompany,
   postCreateUpdateCompany,
 };
