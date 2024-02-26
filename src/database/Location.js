@@ -98,10 +98,10 @@ async function createCompany(companies) {
       const createCompanyResponseSource =
         await hubspotClientSource.crm.companies.basicApi.create(location);
     }
-    if (!companieHsSource) {
+    if (!companieHsMirror) {
       createCompanyMirror.push(location);
       const createCompanyResponseMirror =
-        await hubspotClientSource.crm.companies.basicApi.create(location);
+        await hubspotClientMirror.crm.companies.basicApi.create(location);
     }
   });
   return { createCompanySource, createCompanyMirror };
