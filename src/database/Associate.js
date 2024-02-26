@@ -90,7 +90,7 @@ async function associationContactCompany() {
     const toObjectType = "contacts";
     try {
       const apiResponse =
-        await hubspotClient.crm.associations.v4.batchApi.create(
+        await hubspotClientSource.crm.associations.v4.batchApi.create(
           fromObjectType,
           toObjectType,
           BatchInputPublicAssociationMultiPost
