@@ -152,21 +152,22 @@ async function createUpdateCharacters(contacPropierties, contacts) {
   console.log(contactMirror);
   console.log("\nCharacter_id\n");
   console.log(character_id);
-  if (!contactMirror.character_id && character_id) {
-    const contact = {
-      properties: {
-        character_id: character_id.value,
-        firstname: firstname.value,
-        lastname: lastname.value || "",
-        status_character: status_character.value || "",
-        character_species: character_species.value || "",
-        character_gender: character_gender.value || "",
-      },
-    };
-    const creatNewContactMirror =
-      await hubspotClientMirror.crm.contacts.basicApi.create(contact);
-  }
   if (character_id) {
+    if (!contactMirror) {
+      const contact = {
+        properties: {
+          character_id: character_id.value,
+          firstname: firstname.value,
+          lastname: lastname.value || "",
+          status_character: status_character.value || "",
+          character_species: character_species.value || "",
+          character_gender: character_gender.value || "",
+        },
+      };
+      const creatNewContactMirror =
+        await hubspotClientMirror.crm.contacts.basicApi.create(contact);
+      return;
+    }
     //update contact
     const contactToUpdate = contacts.find(
       (contact) => contact.character_id == character_id.value
