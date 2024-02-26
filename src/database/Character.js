@@ -209,10 +209,10 @@ async function createUpdateCharacters(contacPropierties, contacts) {
       properties: {
         character_id: id,
         firstname: firstname.value,
-        lastname: lastname.value,
-        status_character: status_character.value,
-        character_species: character_species.value,
-        character_gender: character_gender.value,
+        lastname: lastname.value || "",
+        status_character: status_character.value || "",
+        character_species: character_species.value || "",
+        character_gender: character_gender.value || "",
       },
     };
     const creatNewContactMirror =
