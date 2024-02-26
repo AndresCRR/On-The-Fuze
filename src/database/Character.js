@@ -158,6 +158,7 @@ async function createUpdateCharacters(contacPropierties, contacts) {
     contactToUpdate.character_species = character_species.value;
     contactToUpdate.character_gender = character_gender.value;
     console.log(contactToUpdate);
+    console.log(character_id.value);
     const publicObjectSearchRequest = {
       filterGroups: [
         {
@@ -172,8 +173,6 @@ async function createUpdateCharacters(contacPropierties, contacts) {
       ],
       sorts: [{ propertyName: "character_id", direction: "DESCENDING" }],
       properties: ["createdate", "firstname", "lastname"],
-      limit: 100,
-      after: 0,
     };
 
     const responseMirror =
@@ -181,7 +180,10 @@ async function createUpdateCharacters(contacPropierties, contacts) {
         publicObjectSearchRequest
       );
     console.log(responseMirror);
-
+    const contactMirror = responseMirror.results.find(
+      (response) => response.properties == character_id.value
+    );
+    console.log("\n\n\ncontactMirror\n", contactMirror);
     // const BatchInputSimplePublicObjectBatchInput = {
     //   inputs: [
     //     {
