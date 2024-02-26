@@ -157,6 +157,30 @@ async function createUpdateCharacters(contacPropierties, contacts) {
     contactToUpdate.status_character = status_character.value;
     contactToUpdate.character_species = character_species.value;
     contactToUpdate.character_gender = character_gender.value;
+    console.log(contactToUpdate);
+    const publicObjectSearchRequest = {
+      filterGroups: [
+        {
+          filters: [
+            {
+              propertyName: "character_id",
+              operator: "GTE",
+              value: character_id.value,
+            },
+          ],
+        },
+      ],
+      sorts: [{ propertyName: "createdate", direction: "DESCENDING" }],
+      properties: ["createdate", "firstname", "lastname"],
+      limit: 100,
+      after: 0,
+    };
+
+    const responseMirror =
+      await hubspotClientMirror.crm.contacts.searchApi.doSearch(
+        publicObjectSearchRequest
+      );
+    console.log(responseMirror);
 
     // const BatchInputSimplePublicObjectBatchInput = {
     //   inputs: [
