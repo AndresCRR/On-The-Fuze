@@ -173,6 +173,7 @@ async function createUpdateCharacters(contacPropierties, contacts) {
       ],
       sorts: [{ propertyName: "character_id", direction: "DESCENDING" }],
       properties: ["createdate", "firstname", "lastname"],
+      limit: 300,
     };
 
     const responseMirror =
