@@ -63,8 +63,6 @@ async function associationContactCompany() {
     if (!companyToAssociate) {
       return;
     }
-    console.log("\ncompanyToAssociate\n");
-    console.log(companyToAssociate);
     // const associate = {
     //   assocaites: {
     //     contact: {
@@ -90,19 +88,21 @@ async function associationContactCompany() {
     };
     const fromObjectType = "companies";
     const toObjectType = "contacts";
-    try {
-      const apiResponse =
-        await hubspotClientSource.crm.associations.v4.batchApi.create(
-          fromObjectType,
-          toObjectType,
-          BatchInputPublicAssociationMultiPost
-        );
-      console.log(JSON.stringify(apiResponse, null, 2));
-    } catch (e) {
-      e.message === "HTTP request failed"
-        ? console.error(JSON.stringify(e.response, null, 2))
-        : console.error(e);
-    }
+    // try {
+    const apiResponse =
+      await hubspotClientSource.crm.associations.v4.batchApi.create(
+        fromObjectType,
+        toObjectType,
+        BatchInputPublicAssociationMultiPost
+      );
+    console.log("\ncompanyToAssociate\n");
+    console.log(companyToAssociate);
+    console.log(JSON.stringify(apiResponse, null, 2));
+    // } catch (e) {
+    //   e.message === "HTTP request failed"
+    //     ? console.error(JSON.stringify(e.response, null, 2))
+    //     : console.error(e);
+    // }
 
     //   const createAssociation =
     //     await hubspotClientSource.crm.associations.v4.basicApi.create(
