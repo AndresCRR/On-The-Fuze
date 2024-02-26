@@ -120,11 +120,11 @@ async function createContact(characters) {
       const createContactResponseSource =
         await hubspotClientSource.crm.contacts.basicApi.create(contact);
     }
-    if (!contactHsMirror) {
-      createContactMirror.push(contact);
-      const createContactResponseMirror =
-        await hubspotClientMirror.crm.contacts.basicApi.create(contact);
-    }
+    // if (!contactHsMirror) {
+    //   createContactMirror.push(contact);
+    //   const createContactResponseMirror =
+    //     await hubspotClientMirror.crm.contacts.basicApi.create(contact);
+    // }
   });
   return { createContactSource, createContactMirror };
 }
@@ -140,15 +140,29 @@ async function createUpdateCharacters(contacPropierties, contacts) {
     character_gender,
     hs_object_id,
   } = contacPropierties;
+  const responseMirror = await hubspotClientMirror.crm.contacts.getAll(
+    undefined,
+    undefined,
+    ["lastname", "firstname", "character_id"]
+  );
+  const contactMirror = responseMirror.find(
+    (response) => response.properties.character_id == character_id.value
+  );
+  if (!contactMirror.character_id && character_id) {
+    const contact = {
+      properties: {
+        character_id: character_id.value,
+        firstname: firstname.value,
+        lastname: lastname.value || "",
+        status_character: status_character.value || "",
+        character_species: character_species.value || "",
+        character_gender: character_gender.value || "",
+      },
+    };
+    const creatNewContactMirror =
+      await hubspotClientMirror.crm.contacts.basicApi.create(contact);
+  }
   if (character_id) {
-    const responseMirror = await hubspotClientMirror.crm.contacts.getAll(
-      undefined,
-      undefined,
-      ["lastname", "firstname", "character_id"]
-    );
-    const contactMirror = responseMirror.find(
-      (response) => response.properties.character_id == character_id.value
-    );
     //update contact
     const contactToUpdate = contacts.find(
       (contact) => contact.character_id == character_id.value
