@@ -213,7 +213,6 @@ async function createUpdateCharacters(contacPropierties, contacts) {
         status_character: status_character.value,
         character_species: character_species.value,
         character_gender: character_gender.value,
-        country: origin.value,
       },
     };
     const creatNewContactMirror =
