@@ -170,7 +170,7 @@ async function createUpdateCharacters(contacPropierties, contacts) {
           ],
         },
       ],
-      sorts: [{ propertyName: "createdate", direction: "DESCENDING" }],
+      sorts: [{ propertyName: "character_id", direction: "DESCENDING" }],
       properties: ["createdate", "firstname", "lastname"],
       limit: 100,
       after: 0,
