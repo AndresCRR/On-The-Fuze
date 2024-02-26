@@ -147,6 +147,14 @@ async function createUpdateCharacters(contacPropierties, contacts) {
     character_gender,
     hs_object_id,
   } = contacPropierties;
+  const responseMirror = await hubspotClientMirror.crm.contacts.getAll(
+    undefined,
+    undefined,
+    ["lastname", "firstname", "character_id"]
+  );
+  const contactMirror = responseMirror.find(
+    (response) => response.properties.character_id == character_id.value
+  );
   if (character_id) {
     //update contact
     const contactToUpdate = contacts.find(
@@ -158,40 +166,6 @@ async function createUpdateCharacters(contacPropierties, contacts) {
     contactToUpdate.character_species = character_species.value;
     contactToUpdate.character_gender = character_gender.value;
     console.log(contactToUpdate);
-    const publicObjectSearchRequest = {
-      filterGroups: [
-        {
-          filters: [
-            {
-              propertyName: "character_id",
-              operator: "GTE",
-              value: character_id.value,
-            },
-          ],
-        },
-      ],
-      sorts: [{ propertyName: "character_id", direction: "DESCENDING" }],
-      properties: ["createdate", "firstname", "lastname"],
-      limit: 100,
-      after: 0,
-    };
-
-    // const responseMirror =
-    //   await hubspotClientMirror.crm.contacts.searchApi.doSearch(
-    //     publicObjectSearchRequest
-    //   );
-    const responseMirror = await hubspotClientMirror.crm.contacts.getAll(
-      undefined,
-      undefined,
-      ["lastname", "firstname", "character_id"]
-    );
-    // console.log(responseMirror);
-    console.log("Mirror");
-    console.log(character_id.value);
-    const contactMirror = responseMirror.find(
-      (response) => response.properties.character_id == character_id.value
-    );
-    console.log("\n\n\ncontactMirror\n", contactMirror);
     const BatchInputSimplePublicObjectBatchInput = {
       inputs: [
         {
@@ -226,7 +200,8 @@ async function createUpdateCharacters(contacPropierties, contacts) {
       status_character.value,
       character_species.value,
       character_gender.value,
-      hs_object_id.value
+      hs_object_id.value,
+      contactMirror.id
     );
     contacts.push(newContact);
     return newContact;
@@ -239,7 +214,8 @@ async function createNewCharacter(
   status_character,
   character_species,
   character_gender,
-  hs_object_id
+  hs_object_id,
+  contactMirrorId
 ) {
   const id = uuidv4();
   const newContact = {
@@ -250,7 +226,7 @@ async function createNewCharacter(
     character_species: character_species,
     character_gender: character_gender,
   };
-  const BatchInputSimplePublicObjectBatchInput = {
+  const BatchInputSimplePublicObjectBatchInputSource = {
     inputs: [
       {
         id: hs_object_id,
@@ -260,14 +236,24 @@ async function createNewCharacter(
       },
     ],
   };
+  const BatchInputSimplePublicObjectBatchInputMirror = {
+    inputs: [
+      {
+        id: contactMirrorId,
+        properties: {
+          character_id: id,
+        },
+      },
+    ],
+  };
   try {
     const apiResponseSource =
       await hubspotClientSource.crm.contacts.batchApi.update(
-        BatchInputSimplePublicObjectBatchInput
+        BatchInputSimplePublicObjectBatchInputSource
       );
     const apiResponseMirror =
       await hubspotClientMirror.crm.contacts.batchApi.update(
-        BatchInputSimplePublicObjectBatchInput
+        BatchInputSimplePublicObjectBatchInputMirror
       );
     return newContact;
   } catch (e) {
