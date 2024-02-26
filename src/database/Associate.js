@@ -27,16 +27,16 @@ async function associationContactCompany() {
     undefined,
     ["name", "location_id"]
   );
-  const allContactsMirror = await hubspotClientMirror.crm.contacts.getAll(
-    undefined,
-    undefined,
-    ["firstname", "lastname", "character_id"]
-  );
-  const allCompaniesMirror = await hubspotClientMirror.crm.companies.getAll(
-    undefined,
-    undefined,
-    ["name", "location_id"]
-  );
+  // const allContactsMirror = await hubspotClientMirror.crm.contacts.getAll(
+  //   undefined,
+  //   undefined,
+  //   ["firstname", "lastname", "character_id"]
+  // );
+  // const allCompaniesMirror = await hubspotClientMirror.crm.companies.getAll(
+  //   undefined,
+  //   undefined,
+  //   ["name", "location_id"]
+  // );
   const allCharacters = character.exportContacts();
   const allAssociatesSource = [];
   const allAssociatesMirror = [];
@@ -63,17 +63,19 @@ async function associationContactCompany() {
     if (!companyToAssociate) {
       return;
     }
-    const associate = {
-      assocaites: {
-        contact: {
-          name:
-            contact.properties.firstname + " " + contact.properties.lastname,
-        },
-        company: {
-          name: companyToAssociate.properties.name,
-        },
-      },
-    };
+    console.log("\ncompanyToAssociate\n");
+    console.log(companyToAssociate);
+    // const associate = {
+    //   assocaites: {
+    //     contact: {
+    //       name:
+    //         contact.properties.firstname + " " + contact.properties.lastname,
+    //     },
+    //     company: {
+    //       name: companyToAssociate.properties.name,
+    //     },
+    //   },
+    // };
 
     const BatchInputPublicAssociationMultiPost = {
       inputs: [
