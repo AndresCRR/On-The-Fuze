@@ -89,14 +89,14 @@ async function associationContactCompany() {
     const fromObjectType = "companies";
     const toObjectType = "contacts";
     // try {
+    console.log("\ncompanyToAssociate\n");
+    console.log(companyToAssociate);
     const apiResponse =
       await hubspotClientSource.crm.associations.v4.batchApi.create(
         fromObjectType,
         toObjectType,
         BatchInputPublicAssociationMultiPost
       );
-    console.log("\ncompanyToAssociate\n");
-    console.log(companyToAssociate);
     console.log(JSON.stringify(apiResponse, null, 2));
     return associate;
     // } catch (e) {
