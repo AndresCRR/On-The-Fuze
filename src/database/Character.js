@@ -192,31 +192,31 @@ async function createUpdateCharacters(contacPropierties, contacts) {
       (response) => response.properties.character_id == character_id.value
     );
     console.log("\n\n\ncontactMirror\n", contactMirror);
-    // const BatchInputSimplePublicObjectBatchInput = {
-    //   inputs: [
-    //     {
-    //       id: hs_object_id,
-    //       properties: {
-    //         firstname: firstname.value,
-    //         lastname: lastname.value,
-    //         status_character: status_character.value,
-    //         character_species: character_species.value,
-    //         character_gender: character_gender.value,
-    //       },
-    //     },
-    //   ],
-    // };
-    // try {
-    //   const apiResponseMirror =
-    //     await hubspotClientMirror.crm.contacts.batchApi.update(
-    //       BatchInputSimplePublicObjectBatchInput
-    //     );
-    //   return contactToUpdate;
-    // } catch (e) {
-    //   e.message === "HTTP request failed"
-    //     ? console.error(JSON.stringify(e.response, null, 2))
-    //     : console.error(e);
-    // }
+    const BatchInputSimplePublicObjectBatchInput = {
+      inputs: [
+        {
+          id: contactMirror.id,
+          properties: {
+            firstname: firstname.value,
+            lastname: lastname.value,
+            status_character: status_character.value,
+            character_species: character_species.value,
+            character_gender: character_gender.value,
+          },
+        },
+      ],
+    };
+    try {
+      const apiResponseMirror =
+        await hubspotClientMirror.crm.contacts.batchApi.update(
+          BatchInputSimplePublicObjectBatchInput
+        );
+      return contactToUpdate;
+    } catch (e) {
+      e.message === "HTTP request failed"
+        ? console.error(JSON.stringify(e.response, null, 2))
+        : console.error(e);
+    }
     return contactToUpdate;
   } else {
     //create contact in characters an update character_id in contacts
