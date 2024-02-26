@@ -148,10 +148,6 @@ async function createUpdateCharacters(contacPropierties, contacts) {
   const contactMirror = responseMirror.find(
     (response) => response.properties.character_id == character_id.value
   );
-  console.log("\ncontactMirror\n");
-  console.log(contactMirror);
-  console.log("\nCharacter_id\n");
-  console.log(character_id);
   if (character_id) {
     if (!contactMirror) {
       const contact = {
@@ -191,6 +187,7 @@ async function createUpdateCharacters(contacPropierties, contacts) {
         },
       ],
     };
+    console.log(BatchInputSimplePublicObjectBatchInput);
     try {
       const apiResponseMirror =
         await hubspotClientMirror.crm.contacts.batchApi.update(

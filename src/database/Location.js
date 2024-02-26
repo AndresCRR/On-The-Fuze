@@ -98,11 +98,11 @@ async function createCompany(companies) {
       const createCompanyResponseSource =
         await hubspotClientSource.crm.companies.basicApi.create(location);
     }
-    if (!companieHsMirror) {
-      createCompanyMirror.push(location);
-      const createCompanyResponseMirror =
-        await hubspotClientMirror.crm.companies.basicApi.create(location);
-    }
+    // if (!companieHsMirror) {
+    //   createCompanyMirror.push(location);
+    //   const createCompanyResponseMirror =
+    //     await hubspotClientMirror.crm.companies.basicApi.create(location);
+    // }
   });
   return { createCompanySource, createCompanyMirror };
 }
@@ -117,15 +117,28 @@ async function createUpdateLocations(locationPropierties, locations) {
     creation_date,
     hs_object_id,
   } = locationPropierties;
+  const responseMirror = await hubspotClientMirror.crm.companies.getAll(
+    undefined,
+    undefined,
+    ["lastname", "firstname", "character_id"]
+  );
+  const companyMirror = responseMirror.find(
+    (response) => response.properties.location_id == location_id.value
+  );
   if (location_id) {
-    const responseMirror = await hubspotClientMirror.crm.companies.getAll(
-      undefined,
-      undefined,
-      ["lastname", "firstname", "character_id"]
-    );
-    const companyMirror = responseMirror.find(
-      (response) => response.properties.location_id == location_id.value
-    );
+    if (!companyMirror) {
+      const location = {
+        properties: {
+          location_id: location_id.value,
+          name: name.value,
+          location_type: location_type.value || "",
+          dimension: dimension.value || "",
+          creation_date: creation_date.value || "",
+        },
+      };
+      const creatNewLoactionMirror =
+        await hubspotClientMirror.crm.companies.basicApi.create(location);
+    }
     const locationToUpdate = locations.find(
       (location) => location.location_id == location_id.value
     );
