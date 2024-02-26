@@ -176,10 +176,15 @@ async function createUpdateCharacters(contacPropierties, contacts) {
       limit: 300,
     };
 
-    const responseMirror =
-      await hubspotClientMirror.crm.contacts.searchApi.doSearch(
-        publicObjectSearchRequest
-      );
+    // const responseMirror =
+    //   await hubspotClientMirror.crm.contacts.searchApi.doSearch(
+    //     publicObjectSearchRequest
+    //   );
+    const responseMirror = await hubspotClientMirror.crm.contacts.getAll(
+      undefined,
+      undefined,
+      ["lastname", "firstname", "character_id"]
+    );
     console.log(responseMirror);
     const contactMirror = responseMirror.results.find(
       (response) => response.properties == character_id.value
