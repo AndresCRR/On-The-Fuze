@@ -158,7 +158,6 @@ async function createUpdateCharacters(contacPropierties, contacts) {
     contactToUpdate.character_species = character_species.value;
     contactToUpdate.character_gender = character_gender.value;
     console.log(contactToUpdate);
-    console.log(character_id.value);
     const publicObjectSearchRequest = {
       filterGroups: [
         {
@@ -177,17 +176,19 @@ async function createUpdateCharacters(contacPropierties, contacts) {
       after: 0,
     };
 
-    const responseMirror =
-      await hubspotClientMirror.crm.contacts.searchApi.doSearch(
-        publicObjectSearchRequest
-      );
-    // const responseMirror = await hubspotClientMirror.crm.contacts.getAll(
-    //   undefined,
-    //   undefined,
-    //   ["lastname", "firstname", "character_id"]
-    // );
-    console.log(responseMirror);
-    const contactMirror = responseMirror.results.find(
+    // const responseMirror =
+    //   await hubspotClientMirror.crm.contacts.searchApi.doSearch(
+    //     publicObjectSearchRequest
+    //   );
+    const responseMirror = await hubspotClientMirror.crm.contacts.getAll(
+      undefined,
+      undefined,
+      ["lastname", "firstname", "character_id"]
+    );
+    // console.log(responseMirror);
+    console.log("Mirror");
+    console.log(character_id.value);
+    const contactMirror = responseMirror.find(
       (response) => response.properties.character_id == character_id.value
     );
     console.log("\n\n\ncontactMirror\n", contactMirror);
