@@ -14,7 +14,6 @@ const getAllAssociates = async () => {
   const { allAssociatesSource, allAssociatesMirror } =
     await associationContactCompany();
   return { allAssociatesSource, allAssociatesMirror };
-  // return DB.associations;
 };
 
 async function associationContactCompany() {
@@ -42,7 +41,6 @@ async function associationContactCompany() {
   const allAssociatesSource = [];
   const allAssociatesMirror = [];
 
-  // for (contact of allContactsSource) {
   allContactsSource.map(async (contact) => {
     if (!contact) {
       return;
@@ -56,11 +54,9 @@ async function associationContactCompany() {
     if (companiesAssociateContactSource.results[0]) {
       return;
     }
-    // console.log(allCharacters);
     const location = await allCharacters.find(
       (character) => character.character_id == contact.properties.character_id
     );
-    // console.log("\nlocation\n", location);
     const companyToAssociate = allCompaniesSource.find(
       (company) => company.properties.name == location.location
     );
@@ -91,12 +87,9 @@ async function associationContactCompany() {
           },
         ]
       );
-    // console.log(createAssociation);
     allAssociatesSource.push(associate);
   });
-  // }
 
-  // for (contact of allContactsMirror) {
   allContactsMirror.map(async (contact) => {
     if (!contact) {
       return;
@@ -113,7 +106,7 @@ async function associationContactCompany() {
     const location = allCharacters.find(
       (character) => character.character_id == contact.properties.character_id
     );
-    const companyToAssociate = allCompaniesSource.find(
+    const companyToAssociate = allCompaniesMirror.find(
       (company) => company.properties.name == location.location
     );
     if (!companyToAssociate) {
@@ -140,14 +133,11 @@ async function associationContactCompany() {
           {
             associationCategory: "HUBSPOT_DEFINED",
             associationTypeId: 2,
-            // AssociationTypes contains the most popular HubSpot defined association types
           },
         ]
       );
-    // console.log(createAssociation);
     allAssociatesMirror.push(associate);
   });
-  // }
 
   return { allAssociatesSource, allAssociatesMirror };
 }

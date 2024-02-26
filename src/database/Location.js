@@ -179,7 +179,7 @@ async function createUpdateLocations(locationPropierties, locations) {
       },
     };
     const creatNewLoactionMirror =
-      await hubspotClientMirror.crm.companies.basicApi.create(contact);
+      await hubspotClientMirror.crm.companies.basicApi.create(location);
     return newLocation;
   }
 }
