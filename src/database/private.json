@@ -1,4 +1,12 @@
 {
-    "name": "key",
-    "key": "pat-na1-39ec74a2-7552-4bef-a4d2-9c65301ba2f3"
+    "source":
+    {
+        "name": "source",
+        "token": "pat-na1-71a71de9-ce95-4ba4-b369-f017913e9056"
+    },
+    "mirror":
+    {
+        "name": "mirror",
+        "token": "pat-na1-39ec74a2-7552-4bef-a4d2-9c65301ba2f3"
+    }
 }

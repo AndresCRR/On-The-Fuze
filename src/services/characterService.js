@@ -5,8 +5,9 @@ const getALLCharacters = () => {
   return allCharacters;
 };
 const getCreateContact = async (characters) => {
-  const createContact = await Character.getCreateCharacters(characters);
-  return createContact;
+  const { createContactSource, createContactMirror } =
+    await Character.getCreateCharacters(characters);
+  return { createContactSource, createContactMirror };
 };
 const postCreateUpdateContact = async (contacPropierties) => {
   const createUpdateContact = await Character.postCreateUpdateContact(

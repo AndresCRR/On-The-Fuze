@@ -7,8 +7,14 @@ const getAllLocations = (req, res) => {
 
 const getCreateCompany = async (req, res) => {
   const allLocations = locationService.getAllLocations();
-  const createLocations = await locationService.getCreateCompany(allLocations);
-  res.send({ status: "OK", action: "Create", data: createLocations });
+  const { createCompanySource, createCompanyMirror } =
+    await locationService.getCreateCompany(allLocations);
+  res.send({
+    status: "OK",
+    action: "Create",
+    data_source: createCompanySource,
+    data_mirror: createCompanyMirror,
+  });
 };
 
 const postCreateUpdateCompany = async (req, res) => {

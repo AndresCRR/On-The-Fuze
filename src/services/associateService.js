@@ -1,8 +1,9 @@
 const Associate = require("../database/Associate");
 
 const getAllAssociates = async () => {
-  const allAssociates = await Associate.getAllAssociates();
-  return allAssociates;
+  const { allAssociatesSource, allAssociatesMirror } =
+    await Associate.getAllAssociates();
+  return { allAssociatesSource, allAssociatesMirror };
 };
 
 module.exports = {

@@ -7,8 +7,14 @@ const getAllCharacters = (req, res) => {
 
 const getCreateContact = async (req, res) => {
   const allCharacters = characterService.getALLCharacters();
-  const createContact = await characterService.getCreateContact(allCharacters);
-  res.send({ status: "OK", action: "Create", data: createContact });
+  const { createContactSource, createContactMirror } =
+    await characterService.getCreateContact(allCharacters);
+  res.send({
+    status: "OK",
+    action: "Create",
+    data_source: createContactSource,
+    data_mirror: createContactMirror,
+  });
 };
 
 const postCreateUpdateContact = async (req, res) => {

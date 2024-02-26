@@ -1,8 +1,13 @@
 const associateService = require("../services/associateService");
 
 const getAllAssociates = async (req, res) => {
-  const allAssociates = await associateService.getAllAssociates();
-  res.send({ status: "OK", data: allAssociates });
+  const { allAssociatesSource, allAssociatesMirror } =
+    await associateService.getAllAssociates();
+  res.send({
+    status: "OK",
+    data_source: allAssociatesSource,
+    data_mirror: allAssociatesMirror,
+  });
 };
 
 module.exports = {

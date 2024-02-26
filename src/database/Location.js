@@ -2,21 +2,28 @@ const DB = require("./db.json");
 const { v4: uuidv4 } = require("uuid");
 const hubspot = require("@hubspot/api-client");
 const data_key = require("../database/private.json");
+const character = require("./Character");
 
-const hubspotClient = new hubspot.Client({ accessToken: data_key.key });
+const hubspotClientSource = new hubspot.Client({
+  accessToken: data_key.source.token,
+});
+const hubspotClientMirror = new hubspot.Client({
+  accessToken: data_key.mirror.token,
+});
 
-const url_location = "https://rickandmortyapi.com/api/location";
 let locations;
 
-functionLocations(url_location).then((data) => (locations = data));
+functionLocations(character.url_character).then((data) => (locations = data));
 
 const getAllLocations = () => {
   return locations;
 };
 
 const getCreateCompany = async (locations) => {
-  const createLocations = await createCompany(locations);
-  return createLocations;
+  const { createCompanySource, createCompanyMirror } = await createCompany(
+    locations
+  );
+  return { createCompanySource, createCompanyMirror };
 };
 
 const postCreateUpdateCompany = async (locationPropierties) => {
@@ -27,22 +34,27 @@ const postCreateUpdateCompany = async (locationPropierties) => {
   return createUpdateCompany;
 };
 
-function arrayIdLocation(total_location) {
-  const array_location = [];
-  for (let i = 1; i <= total_location; i++) {
-    array_location.push(i);
-  }
-  return array_location;
-}
-
-async function functionLocations(url) {
-  const firstResponse = await fetch(url);
+async function functionLocations(url_character) {
+  const firstResponse = await fetch(url_character);
   const firstLocations = await firstResponse.json();
   const total_location = firstLocations.info.count;
-  const endpointlocation = arrayIdLocation(total_location);
-  const response = await fetch(url + "/" + endpointlocation);
-  const locations = await response.json();
+  const endpointCharacter = character.arrayPrimeNumber(total_location);
+  const endpointlocation = [];
+  const response = await fetch(url_character + "/" + endpointCharacter);
+  const characters = await response.json();
 
+  characters.map((character) => {
+    endpointlocation.push(character.location.url);
+  });
+  const locationUrls = endpointlocation
+    .filter((n, index) => endpointlocation.indexOf(n) === index)
+    .filter((url) => url != "");
+  const locations = [];
+  for (locationUrl of locationUrls) {
+    const res = await fetch(locationUrl);
+    const location = await res.json();
+    locations.push(location);
+  }
   const data = locations.map((location) => {
     return {
       location_id: location.id,
@@ -57,34 +69,48 @@ async function functionLocations(url) {
 
 async function createCompany(companies) {
   if (!companies) return;
-  const allCompanies = await hubspotClient.crm.companies.getAll(
+  const allCompaniesSource = await hubspotClientSource.crm.companies.getAll(
     undefined,
     undefined,
     ["name", "location_id"]
   );
-  const locationCreates = [];
+  const allCompaniesMirror = await hubspotClientMirror.crm.companies.getAll(
+    undefined,
+    undefined,
+    ["name", "location_id"]
+  );
+  const createCompanySource = [];
+  const createCompanyMirror = [];
   companies.map(async (company) => {
-    const companieHs = allCompanies.find(
+    const companieHsSource = allCompaniesSource.find(
       (data_companie) =>
         data_companie.properties.location_id == company.location_id
     );
-    if (!companieHs) {
-      const location = {
-        properties: {
-          location_id: company.location_id,
-          name: company.name,
-          location_type: company.location_type,
-          dimension: company.dimension,
-          creation_date: company.creation_date,
-        },
-      };
-      locationCreates.push(location);
-      console.log("\nlocation \n", location);
-      const createCompanyResponse =
-        await hubspotClient.crm.companies.basicApi.create(location);
+    const companieHsMirror = allCompaniesMirror.find(
+      (data_companie) =>
+        data_companie.properties.location_id == company.location_id
+    );
+    const location = {
+      properties: {
+        location_id: company.location_id,
+        name: company.name,
+        location_type: company.location_type,
+        dimension: company.dimension,
+        creation_date: company.creation_date,
+      },
+    };
+    if (!companieHsSource) {
+      createCompanySource.push(location);
+      const createCompanyResponseSource =
+        await hubspotClientSource.crm.companies.basicApi.create(location);
+    }
+    if (!companieHsSource) {
+      createCompanyMirror.push(location);
+      const createCompanyResponseMirror =
+        await hubspotClientSource.crm.companies.basicApi.create(location);
     }
   });
-  return locationCreates;
+  return { createCompanySource, createCompanyMirror };
 }
 
 async function createUpdateLocations(locationPropierties, locations) {
@@ -145,7 +171,7 @@ async function createNewLocation(
     ],
   };
   try {
-    const apiResponse = await hubspotClient.crm.companies.batchApi.update(
+    const apiResponse = await hubspotClientSource.crm.companies.batchApi.update(
       BatchInputSimplePublicObjectBatchInput
     );
     return newContact;
