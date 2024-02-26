@@ -120,7 +120,7 @@ async function createUpdateLocations(locationPropierties, locations) {
   const responseMirror = await hubspotClientMirror.crm.companies.getAll(
     undefined,
     undefined,
-    ["lastname", "firstname", "character_id"]
+    ["name", "location_id", "location_type", "dimension", "creation_date"]
   );
   const companyMirror = responseMirror.find(
     (response) => response.properties.location_id == location_id.value
@@ -138,6 +138,16 @@ async function createUpdateLocations(locationPropierties, locations) {
       };
       const creatNewLoactionMirror =
         await hubspotClientMirror.crm.companies.basicApi.create(location);
+      return;
+    }
+    if (
+      contactMirror.properties.name == name.value &&
+      contactMirror.properties.location_type == location_type.value &&
+      contactMirror.properties.dimension == dimension.value &&
+      contactMirror.properties.creation_date == creation_date.value &&
+      contactMirror.properties.location_id == location_id.value
+    ) {
+      return;
     }
     const locationToUpdate = locations.find(
       (location) => location.location_id == location_id.value

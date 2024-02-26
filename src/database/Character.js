@@ -143,7 +143,14 @@ async function createUpdateCharacters(contacPropierties, contacts) {
   const responseMirror = await hubspotClientMirror.crm.contacts.getAll(
     undefined,
     undefined,
-    ["lastname", "firstname", "character_id"]
+    [
+      "lastname",
+      "firstname",
+      "character_id",
+      "status_character",
+      "character_gender",
+      "character_species",
+    ]
   );
   const contactMirror = responseMirror.find(
     (response) => response.properties.character_id == character_id.value
@@ -162,6 +169,16 @@ async function createUpdateCharacters(contacPropierties, contacts) {
       };
       const creatNewContactMirror =
         await hubspotClientMirror.crm.contacts.basicApi.create(contact);
+      return;
+    }
+    if (
+      contactMirror.properties.firstname == firstname.value &&
+      contactMirror.properties.lastname == lastname.value &&
+      contactMirror.properties.status_character == status_character.value &&
+      contactMirror.properties.character_gender == character_gender.value &&
+      contactMirror.properties.character_species == character_species.value &&
+      contactMirror.properties.character_id == character_id.value
+    ) {
       return;
     }
     //update contact
@@ -187,7 +204,7 @@ async function createUpdateCharacters(contacPropierties, contacts) {
         },
       ],
     };
-    console.log(BatchInputSimplePublicObjectBatchInput);
+    // console.log(BatchInputSimplePublicObjectBatchInput);
     // try {
     const apiResponseMirror =
       await hubspotClientMirror.crm.contacts.batchApi.update(
