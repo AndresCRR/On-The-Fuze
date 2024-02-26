@@ -177,13 +177,12 @@ async function createUpdateCharacters(contacPropierties, contacts) {
         await hubspotClientMirror.crm.contacts.batchApi.update(
           BatchInputSimplePublicObjectBatchInput
         );
-      return newContact;
+      return contactToUpdate;
     } catch (e) {
       e.message === "HTTP request failed"
         ? console.error(JSON.stringify(e.response, null, 2))
         : console.error(e);
     }
-    return contactToUpdate;
   } else {
     //create contact in characters an update character_id in contacts
     const newContact = await createNewCharacter(
