@@ -173,21 +173,22 @@ async function createUpdateCharacters(contacPropierties, contacts) {
       ],
       sorts: [{ propertyName: "character_id", direction: "DESCENDING" }],
       properties: ["createdate", "firstname", "lastname"],
-      limit: 300,
+      limit: 100,
+      after: 0,
     };
 
-    // const responseMirror =
-    //   await hubspotClientMirror.crm.contacts.searchApi.doSearch(
-    //     publicObjectSearchRequest
-    //   );
-    const responseMirror = await hubspotClientMirror.crm.contacts.getAll(
-      undefined,
-      undefined,
-      ["lastname", "firstname", "character_id"]
-    );
+    const responseMirror =
+      await hubspotClientMirror.crm.contacts.searchApi.doSearch(
+        publicObjectSearchRequest
+      );
+    // const responseMirror = await hubspotClientMirror.crm.contacts.getAll(
+    //   undefined,
+    //   undefined,
+    //   ["lastname", "firstname", "character_id"]
+    // );
     console.log(responseMirror);
     const contactMirror = responseMirror.results.find(
-      (response) => response.properties == character_id.value
+      (response) => response.properties.character_id == character_id.value
     );
     console.log("\n\n\ncontactMirror\n", contactMirror);
     // const BatchInputSimplePublicObjectBatchInput = {
