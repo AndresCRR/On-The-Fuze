@@ -11,9 +11,9 @@ const hubspotClientMirror = new hubspot.Client({
 });
 
 const getAllAssociates = async () => {
-  const { allAssociatesSource, allAssociatesMirror } =
-    await associationContactCompany();
-  return { allAssociatesSource, allAssociatesMirror };
+  const allAssociatesSource = await associationContactCompany();
+  return allAssociatesSource;
+  // return DB.associations;
 };
 
 async function associationContactCompany() {
@@ -27,23 +27,24 @@ async function associationContactCompany() {
     undefined,
     ["name", "location_id"]
   );
-  // const allContactsMirror = await hubspotClientMirror.crm.contacts.getAll(
-  //   undefined,
-  //   undefined,
-  //   ["firstname", "lastname", "character_id"]
-  // );
-  // const allCompaniesMirror = await hubspotClientMirror.crm.companies.getAll(
-  //   undefined,
-  //   undefined,
-  //   ["name", "location_id"]
-  // );
+  const allContactsMirror = await hubspotClientMirror.crm.contacts.getAll(
+    undefined,
+    undefined,
+    ["firstname", "lastname", "character_id"]
+  );
+  const allCompaniesMirror = await hubspotClientMirror.crm.companies.getAll(
+    undefined,
+    undefined,
+    ["name", "location_id"]
+  );
   const allCharacters = character.exportContacts();
-  // const allAssociatesSource = [];
+  const allAssociatesSource = [];
   const allAssociatesMirror = [];
 
-  const allAssociatesSource = await allContactsSource.map(async (contact) => {
+  for (contact of allContactsSource) {
+    // allContactsSource.map(async (contact) => {
     if (!contact) {
-      return;
+      continue;
     }
     const companiesAssociateContactSource =
       await hubspotClientSource.crm.associations.v4.basicApi.getPage(
@@ -52,16 +53,18 @@ async function associationContactCompany() {
         "company"
       );
     if (companiesAssociateContactSource.results[0]) {
-      return;
+      continue;
     }
+    // console.log(allCharacters);
     const location = await allCharacters.find(
       (character) => character.character_id == contact.properties.character_id
     );
+    // console.log("\nlocation\n", location);
     const companyToAssociate = allCompaniesSource.find(
       (company) => company.properties.name == location.location
     );
     if (!companyToAssociate) {
-      return;
+      continue;
     }
     const associate = {
       assocaites: {
@@ -74,54 +77,26 @@ async function associationContactCompany() {
         },
       },
     };
-
-    const BatchInputPublicAssociationMultiPost = {
-      inputs: [
-        {
-          types: [
-            { associationCategory: "HUBSPOT_DEFINED", associationTypeId: 2 },
-          ],
-          _from: { id: companyToAssociate.id },
-          to: { id: contact.id },
-        },
-      ],
-    };
-    const fromObjectType = "companies";
-    const toObjectType = "contacts";
-    // try {
-    console.log("\ncompanyToAssociate\n");
-    console.log(companyToAssociate);
-    const apiResponse =
-      await hubspotClientSource.crm.associations.v4.batchApi.create(
-        fromObjectType,
-        toObjectType,
-        BatchInputPublicAssociationMultiPost
+    const createAssociation =
+      await hubspotClientSource.crm.associations.v4.basicApi.create(
+        "companies",
+        companyToAssociate.id,
+        "contacts",
+        contact.id,
+        [
+          {
+            associationCategory: "HUBSPOT_DEFINED",
+            associationTypeId: 2,
+          },
+        ]
       );
-    console.log(JSON.stringify(apiResponse, null, 2));
-    return associate;
-    // } catch (e) {
-    //   e.message === "HTTP request failed"
-    //     ? console.error(JSON.stringify(e.response, null, 2))
-    //     : console.error(e);
-    // }
+    // console.log(createAssociation);
+    allAssociatesSource.push(associate);
+    // });
+  }
 
-    //   const createAssociation =
-    //     await hubspotClientSource.crm.associations.v4.basicApi.create(
-    //       "companies",
-    //       companyToAssociate.id,
-    //       "contacts",
-    //       contact.id,
-    //       [
-    //         {
-    //           associationCategory: "HUBSPOT_DEFINED",
-    //           associationTypeId: 2,
-    //         },
-    //       ]
-    //     );
-    //   allAssociatesSource.push(associate);
-  });
-
-  // allContactsMirror.map(async (contact) => {
+  // for (contact of allContactsMirror) {
+  //   // allContactsMirror.map(async (contact) => {
   //   if (!contact) {
   //     return;
   //   }
@@ -164,11 +139,14 @@ async function associationContactCompany() {
   //         {
   //           associationCategory: "HUBSPOT_DEFINED",
   //           associationTypeId: 2,
+  //           // AssociationTypes contains the most popular HubSpot defined association types
   //         },
   //       ]
   //     );
+  //   // console.log(createAssociation);
   //   allAssociatesMirror.push(associate);
-  // });
+  //   // });
+  // }
 
   return allAssociatesSource;
 }
