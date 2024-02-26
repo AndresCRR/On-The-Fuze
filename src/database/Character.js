@@ -89,19 +89,9 @@ async function createContact(characters) {
     undefined,
     ["lastname", "firstname", "character_id"]
   );
-  const allContactsMirror = await hubspotClientMirror.crm.contacts.getAll(
-    undefined,
-    undefined,
-    ["lastname", "firstname", "character_id"]
-  );
   const createContactSource = [];
-  const createContactMirror = [];
   characters.map(async (character) => {
     const contactHsSource = allContactsSource.find(
-      (data_contact) =>
-        data_contact.properties.character_id == character.character_id
-    );
-    const contactHsMirror = allContactsMirror.find(
       (data_contact) =>
         data_contact.properties.character_id == character.character_id
     );
@@ -120,13 +110,8 @@ async function createContact(characters) {
       const createContactResponseSource =
         await hubspotClientSource.crm.contacts.basicApi.create(contact);
     }
-    // if (!contactHsMirror) {
-    //   createContactMirror.push(contact);
-    //   const createContactResponseMirror =
-    //     await hubspotClientMirror.crm.contacts.basicApi.create(contact);
-    // }
   });
-  return { createContactSource, createContactMirror };
+  return createContactSource;
 }
 
 async function createUpdateCharacters(contacPropierties, contacts) {

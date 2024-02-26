@@ -68,19 +68,9 @@ async function createCompany(companies) {
     undefined,
     ["name", "location_id"]
   );
-  const allCompaniesMirror = await hubspotClientMirror.crm.companies.getAll(
-    undefined,
-    undefined,
-    ["name", "location_id"]
-  );
   const createCompanySource = [];
-  const createCompanyMirror = [];
   companies.map(async (company) => {
     const companieHsSource = allCompaniesSource.find(
-      (data_companie) =>
-        data_companie.properties.location_id == company.location_id
-    );
-    const companieHsMirror = allCompaniesMirror.find(
       (data_companie) =>
         data_companie.properties.location_id == company.location_id
     );
@@ -98,13 +88,8 @@ async function createCompany(companies) {
       const createCompanyResponseSource =
         await hubspotClientSource.crm.companies.basicApi.create(location);
     }
-    // if (!companieHsMirror) {
-    //   createCompanyMirror.push(location);
-    //   const createCompanyResponseMirror =
-    //     await hubspotClientMirror.crm.companies.basicApi.create(location);
-    // }
   });
-  return { createCompanySource, createCompanyMirror };
+  return createCompanySource;
 }
 
 async function createUpdateLocations(locationPropierties, locations) {

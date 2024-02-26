@@ -18,6 +18,7 @@ const postCreateUpdateContact = async (req, res) => {
   ) {
     return res.status(400).send("Bad Request");
   }
+  console.log(contacPropierties);
   const createUpdateContact = await characterService.postCreateUpdateContact(
     contacPropierties
   );
