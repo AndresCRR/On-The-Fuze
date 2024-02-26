@@ -38,10 +38,10 @@ async function associationContactCompany() {
   //   ["name", "location_id"]
   // );
   const allCharacters = character.exportContacts();
-  const allAssociatesSource = [];
+  // const allAssociatesSource = [];
   const allAssociatesMirror = [];
 
-  allContactsSource.map(async (contact) => {
+  const allAssociatesSource = await allContactsSource.map(async (contact) => {
     if (!contact) {
       return;
     }
@@ -63,17 +63,17 @@ async function associationContactCompany() {
     if (!companyToAssociate) {
       return;
     }
-    // const associate = {
-    //   assocaites: {
-    //     contact: {
-    //       name:
-    //         contact.properties.firstname + " " + contact.properties.lastname,
-    //     },
-    //     company: {
-    //       name: companyToAssociate.properties.name,
-    //     },
-    //   },
-    // };
+    const associate = {
+      assocaites: {
+        contact: {
+          name:
+            contact.properties.firstname + " " + contact.properties.lastname,
+        },
+        company: {
+          name: companyToAssociate.properties.name,
+        },
+      },
+    };
 
     const BatchInputPublicAssociationMultiPost = {
       inputs: [
@@ -98,6 +98,7 @@ async function associationContactCompany() {
     console.log("\ncompanyToAssociate\n");
     console.log(companyToAssociate);
     console.log(JSON.stringify(apiResponse, null, 2));
+    return associate;
     // } catch (e) {
     //   e.message === "HTTP request failed"
     //     ? console.error(JSON.stringify(e.response, null, 2))
@@ -169,7 +170,7 @@ async function associationContactCompany() {
   //   allAssociatesMirror.push(associate);
   // });
 
-  return { allAssociatesSource, allAssociatesMirror };
+  return allAssociatesSource;
 }
 
 module.exports = { getAllAssociates };
