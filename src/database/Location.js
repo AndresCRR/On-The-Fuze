@@ -124,6 +124,14 @@ async function createUpdateLocations(locationPropierties, locations) {
     hs_object_id,
   } = locationPropierties;
   if (location_id) {
+    const responseMirror = await hubspotClientMirror.crm.companies.getAll(
+      undefined,
+      undefined,
+      ["lastname", "firstname", "character_id"]
+    );
+    const companyMirror = responseMirror.find(
+      (response) => response.properties.location_id == location_id.value
+    );
     const locationToUpdate = locations.find(
       (location) => location.location_id == location_id.value
     );
@@ -131,16 +139,53 @@ async function createUpdateLocations(locationPropierties, locations) {
     locationToUpdate.location_type = location_type.value;
     locationToUpdate.dimension = dimension.value;
     locationToUpdate.creation_date = creation_date.value;
+    const BatchInputSimplePublicObjectBatchInput = {
+      inputs: [
+        {
+          id: companyMirror.id,
+          properties: {
+            name: name.value,
+            location_type: location_type.value,
+            dimension: dimension.value,
+            creation_date: creation_date.value,
+          },
+        },
+      ],
+    };
+    try {
+      const apiResponseMirror =
+        await hubspotClientMirror.crm.companies.batchApi.update(
+          BatchInputSimplePublicObjectBatchInput
+        );
+      return locationToUpdate;
+    } catch (e) {
+      e.message === "HTTP request failed"
+        ? console.error(JSON.stringify(e.response, null, 2))
+        : console.error(e);
+    }
     return locationToUpdate;
   } else {
+    const id = uuidv4();
     const newLocation = await createNewLocation(
       name.value,
       location_type.value,
       dimension.value,
       creation_date.value,
-      hs_object_id.value
+      hs_object_id.value,
+      id
     );
     locations.push(newLocation);
+    const location = {
+      properties: {
+        location_id: id,
+        name: name.value,
+        location_type: location_type.value || "",
+        dimension: dimension.value || "",
+        creation_date: creation_date.value || "",
+      },
+    };
+    const creatNewLoactionMirror =
+      await hubspotClientMirror.crm.companies.basicApi.create(contact);
     return newLocation;
   }
 }
@@ -150,9 +195,9 @@ async function createNewLocation(
   location_type,
   dimension,
   creation_date,
-  hs_object_id
+  hs_object_id,
+  id
 ) {
-  const id = uuidv4();
   const newLocation = {
     location_id: id,
     name: name,
